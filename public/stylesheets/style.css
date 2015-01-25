@@ -1,0 +1,93 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.cell {
+    width: 100px;
+    height: 100px;
+    border: 1px solid rgba(15, 13, 13, 0.63);
+    display: inline-block;
+    cursor: pointer;
+}
+
+.row {
+    height: 100px;
+}
+
+.grid-container {
+    outline: 2px solid black;
+}
+
+.wrapper {
+    display: inline-block;
+    position: relative;
+}
+
+.cell .elem.circle {
+    border-radius: 50%;
+    width: 90%;
+    height: 90%;
+    border: 5px solid red;
+}
+
+.elem {
+    width: 100px;
+    height: 100px;
+    position: relative;
+}
+
+.elem.cross:before, .elem.cross:after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    background: #d00;
+}
+
+.elem.cross:before {
+    left: 47%;
+    width: 5%;
+    height: 135%;
+    top: -17%;
+    -ms-transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.elem.cross:after {
+    top: 47%;
+    height: 5%;
+    left: -17%;
+    width: 135%;
+    -ms-transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+    transform: rotate(-135deg);
+}
+
+.red {
+    background: red;
+}
+
+.weaponType {
+    display: inline-block;
+    cursor: pointer;
+    vertical-align: bottom;
+}
+
+label {
+    cursor: pointer;
+    margin-left: 3px;
+}
+
+label.chosen {
+    text-decoration: line-through;
+    font-style: italic;
+}
+
+.chooseWeapon {
+    margin-bottom: 10px;
+}

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/javascripts/jquery-1.11.2.min.js"></script>
+    <script src="/javascripts/generateGrid.js"></script>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %>!</p>
+    <div class="chooseWeapon">Choose your weapon:
+        <input type="radio" class="weaponType" name="weapon" id="cross" value="cross" /><label for="cross">Cross</label>
+        <input type="radio" class="weaponType" name="weapon" id="circle" value="circle" /><label for="circle">Circle</label>
+    </div>
+    <div class="wrapper"></div>
+  </body>
+</html>
