@@ -1,7 +1,6 @@
 var socket = io(),
     chosenWeapon;
 
-
 function generateGrid(gridSize) {
     var arr = Array.apply(null, {length: gridSize}).map(Number.call, Number);
     $('.wrapper').append($('<div class="grid-container"></div>'));
@@ -33,9 +32,12 @@ $(document).on('click', '.cell:not(.filled)', function () {
 
 $(document).on('change', '.weaponType', function () {
     var weaponType = $(this).attr('value');
-    console.log(weaponType);
     chosenWeapon = weaponType;
     socket.emit('chooseWeapon', weaponType);
+});
+
+$(document).on('click', '.restartGame', function () {
+    socket.emit('restartGame');
 });
 
 socket.on('fillCell', function(data){
@@ -47,7 +49,29 @@ socket.on('fillCell', function(data){
 });
 
 socket.on('chooseWeapon', function (data) {
+
+    $('input').attr('disabled', false);
+    $('label').removeClass('chosen');
+
     $('input[id=' + data + ']').attr('disabled', true);
     $('label[for=' + data + ']').addClass('chosen');
 });
+
+socket.on('restartGame', function () {
+    location.reload();
+});
+
+socket.on('connect', function () {
+    socket.emit('isWeaponSelected');
+});
+
+/*socket.on('isWeaponSelected', function (data) {
+    console.log(data);
+    if (data) {
+        $('input[id=' + data + ']').attr('disabled', true);
+        $('label[for=' + data + ']').addClass('chosen');
+    }
+});*/
+
+
 

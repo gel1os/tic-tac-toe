@@ -91,3 +91,14 @@ label.chosen {
 .chooseWeapon {
     margin-bottom: 10px;
 }
+
+.restartGame {
+    width: 100px;
+    height: 30px;
+    background: green;
+    color: white;
+    text-align: center;
+    line-height: 30px;
+    cursor: pointer;
+    margin-top: 3px;
+}

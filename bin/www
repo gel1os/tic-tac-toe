@@ -95,9 +95,9 @@ function onListening() {
 * */
 
 var io = require('socket.io')(server);
+var chosenWeapon;
 
 io.on('connection', function(socket){
-
     socket.on('fillCell', function(data){
         console.log(data);
         io.emit('fillCell', data);
@@ -105,7 +105,19 @@ io.on('connection', function(socket){
 
     socket.on('chooseWeapon', function (data) {
         console.log(data);
+        chosenWeapon = data;
         socket.broadcast.emit('chooseWeapon', data);
+    });
+
+    socket.on('restartGame', function () {
+        io.emit('restartGame');
+        chosenWeapon = null;
+    });
+
+    socket.on('isWeaponSelected', function () {
+        if (chosenWeapon) {
+            socket.emit('chooseWeapon', chosenWeapon);
+        }
     })
 });
 
