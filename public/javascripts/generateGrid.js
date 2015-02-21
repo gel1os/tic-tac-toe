@@ -3,7 +3,7 @@ var socket = io(),
 
 function generateGrid(gridSize) {
     var arr = Array.apply(null, {length: gridSize}).map(Number.call, Number);
-    $('.wrapper').append($('<div class="grid-container"></div>'));
+    $('.wrapper').prepend($('<div class="grid-container"></div>'));
     arr.forEach(function (n, i) {
         $('.grid-container').append($('<div class="row r' + n + '"></div>'));
         arr.forEach(function (_n) {
@@ -18,16 +18,16 @@ $(document).ready(function () {
 });
 
 $(document).on('click', '.cell:not(.filled)', function () {
-        var data = {
-            'data-row': $(this).attr('data-row'),
-            'data-cell': $(this).attr('data-cell'),
-            'weapon': chosenWeapon
-        };
+    var data = {
+        'data-row': $(this).attr('data-row'),
+        'data-cell': $(this).attr('data-cell'),
+        'weapon': chosenWeapon
+    };
 
-        if (data['weapon']) {
-            socket.emit('fillCell', data);
-        }
-        return false
+    if (data['weapon']) {
+        socket.emit('fillCell', data);
+    }
+    return false
 });
 
 $(document).on('change', '.weaponType', function () {
@@ -40,7 +40,7 @@ $(document).on('click', '.restartGame', function () {
     socket.emit('restartGame');
 });
 
-socket.on('fillCell', function(data){
+socket.on('fillCell', function (data) {
     var formData = data,
         chosenCell = $('.cell.r' + formData['data-row'] + '.c' + formData['data-cell']),
         elemToFill = chosenCell.find('.elem');
@@ -65,13 +65,28 @@ socket.on('connect', function () {
     socket.emit('isWeaponSelected');
 });
 
-/*socket.on('isWeaponSelected', function (data) {
+socket.on('whoIsOnline', function (data) {
     console.log(data);
-    if (data) {
-        $('input[id=' + data + ']').attr('disabled', true);
-        $('label[for=' + data + ']').addClass('chosen');
-    }
-});*/
+    var whoIsOnlineTable = jQuery(".whoOnline table");
+
+    whoIsOnlineTable.html("");
+
+    $(data).each(function(index, value) {
+        console.log(value);
+        whoIsOnlineTable.append("<tr><td>" + value + "</td></tr>")
+    })
+
+});
+
+
+
+/*socket.on('isWeaponSelected', function (data) {
+ console.log(data);
+ if (data) {
+ $('input[id=' + data + ']').attr('disabled', true);
+ $('label[for=' + data + ']').addClass('chosen');
+ }
+ });*/
 
 
 

@@ -1,24 +1,43 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%= title %></title>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/javascripts/jquery-1.11.2.min.js"></script>
+<head>
+    <% include ../views/partials/head.ejs %>
     <script src="/javascripts/generateGrid.js"></script>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-  <div>
+    <script src="/javascripts/makeActive.js"></script>
+</head>
+  <body page-type="home">
+  <header>
+      <% include ../views/partials/header.ejs %>
+  </header>
+  <content>
       <h1><%= title %></h1>
       <p>Welcome to <%= title %>!</p>
       <div class="chooseWeapon">Choose your weapon:
-          <input type="radio" class="weaponType" name="weapon" id="cross" value="cross" /><label for="cross">Cross</label>
-          <input type="radio" class="weaponType" name="weapon" id="circle" value="circle" /><label for="circle">Circle</label>
+          <div class="radioBtnWrapper">
+              <input type="radio" class="weaponType" name="weapon" id="cross" value="cross" /><label for="cross">Cross</label>
+          </div>
+          <div class="radioBtnWrapper">
+              <input type="radio" class="weaponType" name="weapon" id="circle" value="circle" /><label for="circle">Circle</label>
+          </div>
+
       </div>
-      <div class="wrapper"></div>
-      <div class="restartGame">
+      <div class="wrapper">
+          <div class="container-fluid whoOnline">
+              <div class="panel panel-primary span12">
+                  <div class="panel-heading">Who is online?</div>
+                  <table class="table">
+                      <% for(var i=0; i<onlineUsers.length; i++) {%>
+                      <tr>
+                          <td><%= onlineUsers[i]%></td>
+                      </tr>
+                      <% }%>
+                  </table>
+              </div>
+          </div>
+      </div>
+      <div class="btn btn-success restartGame">
           Restart game
       </div>
-  </div>
+  </content>
   </body>
 </html>

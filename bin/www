@@ -60,7 +60,7 @@ function onError(error) {
 
   var bind = typeof port === 'string'
     ? 'Pipe ' + port
-    : 'Port ' + port
+    : 'Port ' + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
@@ -89,22 +89,22 @@ function onListening() {
   debug('Listening on ' + bind);
 }
 
-
 /**
 * Socket IO events
 * */
 
 var io = require('socket.io')(server);
+
 var chosenWeapon;
 
-io.on('connection', function(socket){
+var whoIsOnline = require('../middleware/whoIsOnline');
+
+io.sockets.on('connection', function(socket){
     socket.on('fillCell', function(data){
-        console.log(data);
         io.emit('fillCell', data);
     });
 
     socket.on('chooseWeapon', function (data) {
-        console.log(data);
         chosenWeapon = data;
         socket.broadcast.emit('chooseWeapon', data);
     });
@@ -118,8 +118,21 @@ io.on('connection', function(socket){
         if (chosenWeapon) {
             socket.emit('chooseWeapon', chosenWeapon);
         }
-    })
+    });
+
+
+    console.log('user arrived');
+
+    io.emit('whoIsOnline', whoIsOnline);
+
+    socket.on('disconnect', function () {
+        console.log('user left');
+        io.emit('whoIsOnline', whoIsOnline);
+    });
+
 });
+
+
 
 
 

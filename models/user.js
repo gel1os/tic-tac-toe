@@ -1,7 +1,6 @@
 var crypto = require('crypto');
 var mongoose = require('../libs/mongoose'),
     Schema = mongoose.Schema;
-
 var schema = new Schema({
    username: {
        type: String,

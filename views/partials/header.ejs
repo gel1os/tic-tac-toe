@@ -1,0 +1,33 @@
+<ul class="nav nav-pills">
+    <li role="presentation" class="nav-list home"><a href="/">Home</a></li>
+    <li role="presentation" class="nav-list users"><a href="/users">Users</a></li>
+    <% if (!user) {%>
+    <li role="presentation" class="nav-list login pull-right">
+        <span class="notLoggedIn text-danger">Y U NO logged in?</span>
+        <a href="/login" class="login">Login</a></li>
+    <% } else {%>
+    <li role="presentation" class="nav-list login pull-right">
+        <div class="username text-danger"><%= user %></div>
+        <a class="logoutLink" >Logout</a></li>
+    <%}%>
+</ul>
+<script>
+    $('.logoutLink').click(function () {
+        $.ajax({
+            url: "/logout",
+            method: "post",
+            data: {},
+            statusCode: {
+                200: function () {
+                    window.location.replace('/');
+                },
+                403: function (jqXHR) {
+                    var error = JSON.parse(jqXHR.responseText);
+                    console.log(error);
+                    $('.error').html(error.message)
+                }
+            }
+        });
+        return false
+    });
+</script>

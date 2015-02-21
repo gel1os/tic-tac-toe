@@ -1,0 +1,21 @@
+{
+    "mongoose": {
+        "uri": "mongodb://localhost/tic-tac-toe",
+        "options": {
+            "server": {
+                "socketOptions": {
+                    "keepAlive": 1
+                }
+            }
+        }
+    },
+    "session": {
+        "secret": "KillerIsOksana",
+        "key": "sid",
+        "cookie": {
+            "path": "/",
+            "httpOnly": true,
+            "maxAge": null
+        }
+    }
+}

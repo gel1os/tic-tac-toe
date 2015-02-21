@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <% include ../views/partials/head.ejs %>
+    <script src="/javascripts/makeActive.js"></script>
+</head>
+<body page-type="users">
+<header>
+    <% include ../views/partials/header.ejs %>
+</header>
+<content>
+    <h1><%= title %></h1>
+    <div class="panel panel-success">
+        <div class="panel-heading">Players list</div>
+        <table class="table">
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+            </tr>
+            <% for(var i=0; i<users.length; i++) {%>
+            <tr>
+                <td><%= i+1 %></td>
+                <td><%= users[i]%></td>
+            </tr>
+            <% }%>
+        </table>
+    </div>
+</content>
+</body>
+</html>

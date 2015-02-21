@@ -3,10 +3,6 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-a {
-  color: #00B7FF;
-}
-
 .cell {
     width: 100px;
     height: 100px;
@@ -17,10 +13,12 @@ a {
 
 .row {
     height: 100px;
+    margin-right: 0;
+    margin-left: 0;
 }
 
 .grid-container {
-    outline: 2px solid black;
+    display: inline-block;
 }
 
 .wrapper {
@@ -30,8 +28,8 @@ a {
 
 .cell .elem.circle {
     border-radius: 50%;
-    width: 90%;
-    height: 90%;
+    width: 100%;
+    height: 100%;
     border: 5px solid red;
 }
 
@@ -80,7 +78,8 @@ a {
 
 label {
     cursor: pointer;
-    margin-left: 3px;
+    margin-left: 5px;
+    margin-bottom: 0;
 }
 
 label.chosen {
@@ -93,12 +92,81 @@ label.chosen {
 }
 
 .restartGame {
-    width: 100px;
-    height: 30px;
-    background: green;
-    color: white;
-    text-align: center;
-    line-height: 30px;
+    width: 110px;
+    display: block;
+}
+
+ul.navigation {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    width: 100%;
+}
+
+ul.nav.nav-pills {
+    min-width: 210px;
+}
+
+li.nav-item {
+    display: inline-block;
+    margin-right: 10px;
     cursor: pointer;
-    margin-top: 3px;
+    text-decoration: underline;
+}
+
+li.nav-item.login {
+    float: right;
+    margin-right: 0;
+}
+
+a.logoutLink {
+    display: inline-block !important;
+    cursor: pointer;
+}
+
+a.login {
+    display: inline-block !important;
+}
+
+span.notLoggedIn {
+    margin-right: 10px;
+}
+
+span.notLoggedIn::before {
+    content: "";
+    background: url("/images/yunouo.png") no-repeat;
+    background-size: 100%;
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    left: -50px;
+    top: -5px;
+}
+
+.username {
+    display: inline-block;
+}
+
+.container {
+    margin-top: 10px;
+}
+
+content {
+    min-width: 400px;
+    width: 100%;
+    display: block;
+}
+
+.radioBtnWrapper {
+    display: inline-block;
+}
+
+.table th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #d6e9c6;
+}
+
+.whoOnline {
+    display: inline-block;
+    vertical-align: top;
 }

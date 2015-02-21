@@ -1,0 +1,62 @@
+<head>
+    <% include ../views/partials/head.ejs %>
+    <script src="/javascripts/makeActive.js"></script>
+</head>
+<body page-type="login">
+<header>
+    <% include ../views/partials/header.ejs %>
+</header>
+<section class="container">
+    <p>Log in or Register</p>
+    <p>Type your login and password. We will log you in if there is a match.<br>
+        Otherwise, you'll be registered.
+    </p>
+    <form action="" class="form-horizontal login-form" name="login-form">
+        <div class="form-group">
+            <label for="input-username" class="col-lg-2 control-label">Name</label>
+            <div class="col-lg-10">
+                <input name="username" value="" type="text" class="form-control" id="input-username" placeholder="Name"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="input-password" class="col-lg-2 control-label">Password</label>
+            <div class="col-lg-10">
+                <input name="password" value="" type="password" class="form-control" id="input-password" placeholder="Password"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-offset-2 col-lg-10">
+                <button type="submit" class="btn btn-primary" data-loading-text="Loading...">Enter</button>
+                <span class="help-block error"></span>
+            </div>
+        </div>
+    </form>
+    <script>
+        $(document.forms["login-form"]).on("submit", function () {
+            var form = $(this);
+            $.ajax({
+                url: '/login',
+                method: "post",
+                data: form.serialize(),
+                complete: function () {
+                    $(":submit", form).button("reset");
+                },
+                statusCode: {
+                    200: function () {
+                        form.html("You are authorized").addClass('alert-success');
+                        window.location.replace('/');
+                    },
+                    403: function (jqXHR) {
+                        var error = JSON.parse(jqXHR.responseText);
+                        console.log(error);
+                        $('.error').html(error.message)
+                    }
+                }
+            });
+            return false
+        })
+    </script>
+    <footer>
+    </footer>
+</section>
+</body>
