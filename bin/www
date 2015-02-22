@@ -95,45 +95,94 @@ function onListening() {
 
 var io = require('socket.io')(server);
 
-var chosenWeapon;
+//var chosenWeapon;
 
-var whoIsOnline = require('../middleware/whoIsOnline');
+var gameInfo = require('../middleware/gameInfo');
 
 io.sockets.on('connection', function(socket){
-    socket.on('fillCell', function(data){
+
+    socket.on('fillCell', function(data) {
         io.emit('fillCell', data);
     });
 
     socket.on('chooseWeapon', function (data) {
-        chosenWeapon = data;
-        socket.broadcast.emit('chooseWeapon', data);
+        socket.chosenWeapon = data;
+
+        for(var prop in gameInfo) {
+            if(gameInfo.hasOwnProperty(prop)) {
+                if(gameInfo[prop] === socket.username) {
+                    gameInfo[prop] = '';
+                }
+            }
+        }
+
+        gameInfo[socket.chosenWeapon + 'Player'] = socket.username;
+
+        var responseObj = {
+            user: socket.username,
+            weapon: socket.chosenWeapon
+        };
+
+        //io.emit('chooseWeapon', responseObj);
+        socket.broadcast.emit('chooseWeapon', responseObj);
+
+        if (gameInfo['crossPlayer'] && gameInfo['circlePlayer']) {
+            gameInfo['gameStarted'] = true;
+            io.emit('startGame', gameInfo);
+
+        }
     });
 
     socket.on('restartGame', function () {
         io.emit('restartGame');
-        chosenWeapon = null;
+        gameInfo['gameStarted'] = false;
+        gameInfo['crossPlayer'] = '';
+        gameInfo['circlePlayer'] = '';
+        //chosenWeapon = null;
     });
 
-    socket.on('isWeaponSelected', function () {
-        if (chosenWeapon) {
+    /*socket.on('isWeaponSelected', function () {
+        *//*if (chosenWeapon) {
             socket.emit('chooseWeapon', chosenWeapon);
-        }
-    });
-
+        }*//*
+    });*/
 
     console.log('user arrived');
 
-    io.emit('whoIsOnline', whoIsOnline);
+    socket.on('saveUsername', function (data) {
+        if (data) {
+            socket.username = data;
+            var nameExists = gameInfo['usersOnline'].filter(function (value) {
+                return value === socket.username
+            });
+            if (!nameExists.length) {
+                gameInfo['usersOnline'].push(socket.username);
+                io.emit('whoIsOnline', gameInfo['usersOnline']);
 
-    socket.on('disconnect', function () {
-        console.log('user left');
-        io.emit('whoIsOnline', whoIsOnline);
+                if (gameInfo['gameStarted'] === true) {
+                    socket.emit('restoreGameStatus', gameInfo);
+                }
+            }
+        }
     });
 
+    socket.on('disconnect', function () {
+        var socketUsername = socket.username;
+        if (socketUsername) {
+            gameInfo['usersOnline'].splice(gameInfo['usersOnline'].indexOf(socketUsername), 1);
+            socket.username = null;
+        }
+
+        io.emit('whoIsOnline', gameInfo['usersOnline']);
+    });
+
+    socket.on('logout', function () {
+        if (socket.username) {
+            gameInfo['usersOnline'].splice(gameInfo['usersOnline'].indexOf(socket.username), 1);
+            socket.username = null;
+        }
+        io.emit('whoIsOnline', gameInfo['usersOnline']);
+    })
+
 });
-
-
-
-
-
 

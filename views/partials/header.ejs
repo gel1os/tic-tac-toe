@@ -12,7 +12,14 @@
     <%}%>
 </ul>
 <script>
+    var socket = io();
     $('.logoutLink').click(function () {
+
+        var username = jQuery('.username').text();
+        if (username) {
+            socket.emit('logout', username);
+        }
+
         $.ajax({
             url: "/logout",
             method: "post",

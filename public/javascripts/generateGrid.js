@@ -1,92 +1,136 @@
-var socket = io(),
-    chosenWeapon;
+(function(){
+    var socket = io(),
+        chosenWeapon;
 
-function generateGrid(gridSize) {
-    var arr = Array.apply(null, {length: gridSize}).map(Number.call, Number);
-    $('.wrapper').prepend($('<div class="grid-container"></div>'));
-    arr.forEach(function (n, i) {
-        $('.grid-container').append($('<div class="row r' + n + '"></div>'));
-        arr.forEach(function (_n) {
-            $('.row.r' + n).append($('<div class="cell c' + _n + ' r' + n + '" data-row="' + n + '" data-cell="' + _n + '"><div class="elem"></div>'));
+    function generateGrid(gridSize) {
+        var arr = Array.apply(null, {length: gridSize}).map(Number.call, Number);
+        $('.wrapper').prepend($('<div class="grid-container"></div>'));
+        arr.forEach(function (n, i) {
+            $('.grid-container').append($('<div class="row r' + n + '"></div>'));
+            arr.forEach(function (_n) {
+                $('.row.r' + n).append($('<div class="cell c' + _n + ' r' + n + '" data-row="' + n + '" data-cell="' + _n + '"><div class="elem"></div>'));
+            });
         });
-    });
-    return gridSize;
-}
 
-$(document).ready(function () {
-    generateGrid(3);
-});
+        $(".grid-container").append("<div class='pleaseLogin'><div class='close'>close</div><div class='text'>Please <a href='/login'>log in</a> to be able to play!</div></div>");
 
-$(document).on('click', '.cell:not(.filled)', function () {
-    var data = {
-        'data-row': $(this).attr('data-row'),
-        'data-cell': $(this).attr('data-cell'),
-        'weapon': chosenWeapon
-    };
-
-    if (data['weapon']) {
-        socket.emit('fillCell', data);
+        return gridSize;
     }
-    return false
-});
 
-$(document).on('change', '.weaponType', function () {
-    var weaponType = $(this).attr('value');
-    chosenWeapon = weaponType;
-    socket.emit('chooseWeapon', weaponType);
-});
+    $(document).ready(function () {
+        generateGrid(3);
+        var username = jQuery('.username').text();
+        if (username) {
+            socket.emit('saveUsername', username);
+        }
 
-$(document).on('click', '.restartGame', function () {
-    socket.emit('restartGame');
-});
+        if (isForbidden()) {
+            $('.chooseWeapon input').attr('disabled', true);
+            $('.chooseWeapon label').addClass("chosen");
+            $('.restartGame').addClass('disabled');
+        }
+    });
 
-socket.on('fillCell', function (data) {
-    var formData = data,
-        chosenCell = $('.cell.r' + formData['data-row'] + '.c' + formData['data-cell']),
-        elemToFill = chosenCell.find('.elem');
-    chosenCell.addClass('filled');
-    elemToFill.addClass(formData['weapon']);
-});
+    $(document).on('click', '.cell:not(.filled), .close', function () {
+        if (isForbidden()) {
+            $('.grid-container').toggleClass('forbidden');
+            return false
+        }
 
-socket.on('chooseWeapon', function (data) {
+        var data = {
+            'data-row': $(this).attr('data-row'),
+            'data-cell': $(this).attr('data-cell'),
+            'weapon': chosenWeapon
+        };
 
-    $('input').attr('disabled', false);
-    $('label').removeClass('chosen');
+        if (data['weapon']) {
+            socket.emit('fillCell', data);
+        }
+        return false
+    });
 
-    $('input[id=' + data + ']').attr('disabled', true);
-    $('label[for=' + data + ']').addClass('chosen');
-});
+    $(document).on('change', '.weaponType', function () {
+        var weaponType = $(this).attr('value');
+        chosenWeapon = weaponType;
+        socket.emit('chooseWeapon', weaponType);
 
-socket.on('restartGame', function () {
-    location.reload();
-});
+        $('div.chooseWeapon').html("You've chosen <span class='bold'>" + weaponType + "</span>! Waiting for opponent!" );
 
-socket.on('connect', function () {
-    socket.emit('isWeaponSelected');
-});
+        jQuery('table td').each(function(index, value) {
+            if ($(value).text() === $('div.username').text()) {
+                $(value).removeClass().addClass(weaponType);
+            }
+        })
+    });
 
-socket.on('whoIsOnline', function (data) {
-    console.log(data);
-    var whoIsOnlineTable = jQuery(".whoOnline table");
+    $(document).on('click', '.restartGame', function () {
 
-    whoIsOnlineTable.html("");
+        $('.restartGame').addClass('disabled');
 
-    $(data).each(function(index, value) {
-        console.log(value);
-        whoIsOnlineTable.append("<tr><td>" + value + "</td></tr>")
+        if (!isForbidden()) {
+            socket.emit('restartGame');
+        }
+    });
+
+    socket.on('fillCell', function (data) {
+        var formData = data,
+            chosenCell = $('.cell.r' + formData['data-row'] + '.c' + formData['data-cell']),
+            elemToFill = chosenCell.find('.elem');
+        chosenCell.addClass('filled');
+        elemToFill.addClass(formData['weapon']);
+    });
+
+    socket.on('chooseWeapon', function (data) {
+        $('input[id=' + data.weapon + ']').attr('disabled', true);
+        $('label[for=' + data.weapon + ']').addClass('chosen');
+
+        console.log(data.weapon);
+
+        jQuery('table td').each(function(index, value) {
+            if ($(value).text() === data.user) {
+                $(value).removeClass().addClass(data.weapon);
+            }
+        })
+    });
+
+    socket.on('restartGame', function () {
+        location.reload();
+    });
+
+    /*socket.on('connect', function () {
+        socket.emit('isWeaponSelected');
+    });*/
+
+    socket.on("whoIsOnline", function (data) {
+        var whoIsOnlineTable = jQuery(".whoOnline table");
+        whoIsOnlineTable.html("");
+        if (data.length) {
+            $(data).each(function (index, value) {
+                whoIsOnlineTable.append("<tr><td>" + value + "</tr></td>");
+            })
+        } else {
+            whoIsOnlineTable.html("<tr><td>Oops! No one is online... yet.</tr></td>");
+        }
+
+
+    });
+
+    socket.on('startGame', function (data) {
+        console.log(data);
+        console.log('game started!!!');
+        $('div.chooseWeapon').html("Battle is in progress! <span class='bold'>" + data["crossPlayer"] + "</span> VS. <span class='bold'>" + data["circlePlayer"] + '</span>!');
+    });
+
+    socket.on('restoreGameStatus', function (data) {
+        $('div.chooseWeapon').html("Battle is in progress! <span class='bold'>" + data["crossPlayer"] + "</span> VS. <span class='bold'>" + data["circlePlayer"] + '</span>!');
+        jQuery('table td').each(function(index, value) {
+            if ($(value).text() === data['crossPlayer']) {
+                $(value).removeClass().addClass('cross');
+            }
+            if ($(value).text() === data['circlePlayer']) {
+                $(value).removeClass().addClass('circle');
+            }
+        })
     })
 
-});
-
-
-
-/*socket.on('isWeaponSelected', function (data) {
- console.log(data);
- if (data) {
- $('input[id=' + data + ']').attr('disabled', true);
- $('label[for=' + data + ']').addClass('chosen');
- }
- });*/
-
-
-
+}());

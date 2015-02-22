@@ -3,15 +3,12 @@ var router = express.Router();
 var User = require('../models/user').User;
 var mongoose = require('../libs/mongoose');
 var session = require('cookie-session');
-var whoIsOnline = require('../middleware/whoIsOnline');
+var gameInfo = require('../middleware/gameInfo');
 
 router.get('/', function(req, res, next) {
-
-    if (req.session && req.session.username && whoIsOnline.indexOf(req.session.username) === -1) {
-        whoIsOnline.push(req.session.username);
-    }
-
-    res.render('index', { title: 'Tic-tac-toe', user: req.session.username, onlineUsers: whoIsOnline });
+    var username = req.session.username,
+        forbidden = username ? false : true;
+    res.render('index', { title: 'Tic-tac-toe', user: username, onlineUsers: gameInfo, forbidden: forbidden});
 });
 
 router.get('/login', function (req, res, next) {
@@ -49,20 +46,22 @@ router.post('/login', function (req, res, next) {
 });
 
 router.post('/logout', function(req, res, next) {
-    whoIsOnline.splice(whoIsOnline.indexOf(req.session.username), 1);
     req.session = null;
     res.status(200).send({});
 });
 
-router.get('/users', function(req, res, next) {
+router.get("/users", function (req, res, next) {
+    res.render('users', { title: 'Players', user: req.session.username});
+});
+
+router.post('/users', function(req, res, next) {
     var usersList = [];
     User.find({}, function(err, users) {
         users.forEach(function(user) {
-            console.log(user);
             usersList.push(user["username"])
         });
+        res.status(200).send(usersList);
     });
-    res.render('users', { title: 'Players', user: req.session.username, users: usersList});
 });
 
 module.exports = router;

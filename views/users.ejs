@@ -17,14 +17,28 @@
                 <th>#</th>
                 <th>Name</th>
             </tr>
-            <% for(var i=0; i<users.length; i++) {%>
-            <tr>
-                <td><%= i+1 %></td>
-                <td><%= users[i]%></td>
-            </tr>
-            <% }%>
+
         </table>
     </div>
 </content>
 </body>
+<script>
+    $.ajax({
+        url: "/users",
+        method: "post",
+        data: {},
+        statusCode: {
+            200: function (data) {
+                $(data).each(function (index, value) {
+                    $('table').append("<tr><td>" + (parseInt(index)+1) + "</td><td>" + value + "</td></tr>")
+                })
+            },
+            403: function (jqXHR) {
+                var error = JSON.parse(jqXHR.responseText);
+                console.log(error);
+                $('.error').html(error.message)
+            }
+        }
+    });
+</script>
 </html>

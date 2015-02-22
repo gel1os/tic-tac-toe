@@ -5,6 +5,13 @@
     <script src="/javascripts/generateGrid.js"></script>
     <script src="/javascripts/makeActive.js"></script>
 </head>
+<script>
+    (function() {
+        return isForbidden = function () {
+            return <%=forbidden%>
+        };
+    }());
+</script>
   <body page-type="home">
   <header>
       <% include ../views/partials/header.ejs %>
@@ -14,23 +21,28 @@
       <p>Welcome to <%= title %>!</p>
       <div class="chooseWeapon">Choose your weapon:
           <div class="radioBtnWrapper">
-              <input type="radio" class="weaponType" name="weapon" id="cross" value="cross" /><label for="cross">Cross</label>
+              <input type="radio" autocomplete="off" class="weaponType" name="weapon" id="cross" value="cross" /><label for="cross">Cross</label>
           </div>
           <div class="radioBtnWrapper">
-              <input type="radio" class="weaponType" name="weapon" id="circle" value="circle" /><label for="circle">Circle</label>
+              <input type="radio" autocomplete="off" class="weaponType" name="weapon" id="circle" value="circle" /><label for="circle">Circle</label>
           </div>
-
       </div>
       <div class="wrapper">
           <div class="container-fluid whoOnline">
-              <div class="panel panel-primary span12">
+              <div class="panel panel-primary">
                   <div class="panel-heading">Who is online?</div>
                   <table class="table">
-                      <% for(var i=0; i<onlineUsers.length; i++) {%>
-                      <tr>
-                          <td><%= onlineUsers[i]%></td>
-                      </tr>
-                      <% }%>
+                      <% if (onlineUsers.length) {
+                          for(var i=0; i<onlineUsers.length; i++) {%>
+                              <tr>
+                                  <td><%= onlineUsers[i]%></td>
+                              </tr>
+                      <% }
+                      } else {%>
+                            <tr>
+                                <td>Oops! No one is online... yet.</td>
+                            </tr>
+                      <%}%>
                   </table>
               </div>
           </div>

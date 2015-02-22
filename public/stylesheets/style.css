@@ -19,6 +19,7 @@ body {
 
 .grid-container {
     display: inline-block;
+    position: relative;
 }
 
 .wrapper {
@@ -30,7 +31,7 @@ body {
     border-radius: 50%;
     width: 100%;
     height: 100%;
-    border: 5px solid red;
+    border: 5px solid #cc0000;
 }
 
 .elem {
@@ -43,7 +44,7 @@ body {
     content: "";
     position: absolute;
     z-index: -1;
-    background: #d00;
+    background: #cc0000;
 }
 
 .elem.cross:before {
@@ -67,7 +68,7 @@ body {
 }
 
 .red {
-    background: red;
+    background: #cc0000;
 }
 
 .weaponType {
@@ -170,3 +171,62 @@ content {
     display: inline-block;
     vertical-align: top;
 }
+
+.whoOnline table td.circle::before {
+    content: "o";
+    color: #cc0000;
+    font-size: 21px;
+    vertical-align: top;
+    line-height: 17px;
+    margin-right: 3px;
+}
+
+.whoOnline table td.cross::before {
+    content: "x";
+    color: #cc0000;
+    font-size: 21px;
+    vertical-align: top;
+    line-height: 17px;
+    margin-right: 3px;
+}
+
+.grid-container.forbidden .pleaseLogin {
+    display: block;
+}
+
+.pleaseLogin {
+    position: absolute;
+    top: 0;
+    text-align: center;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    height: 100%;
+    border: 1px solid black;
+    display: none;
+}
+
+.pleaseLogin div.text {
+    top: 140px;
+    position: absolute;
+    width: 100%;
+    font-size: 16px;
+}
+
+.pleaseLogin .close{
+    opacity: .6;
+    margin-top: 5px;
+    margin-right: 5px;
+    font-size: 14px;
+}
+
+.pleaseLogin .close:hover{
+    opacity: .8;
+}
+
+span.bold {
+    font-weight: 700;
+}
+
+
+
+
