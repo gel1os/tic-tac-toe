@@ -1,6 +1,7 @@
 (function(){
     var socket = io(),
-        chosenWeapon;
+        chosenWeapon,
+        gameInProgress = false;
 
     function generateGrid(gridSize) {
         var arr = Array.apply(null, {length: gridSize}).map(Number.call, Number);
@@ -19,7 +20,8 @@
 
     $(document).ready(function () {
         generateGrid(3);
-        var username = jQuery('.username').text();
+        var username = $('.username').text();
+
         if (username) {
             socket.emit('saveUsername', username);
         }
@@ -29,6 +31,7 @@
             $('.chooseWeapon label').addClass("chosen");
             $('.restartGame').addClass('disabled');
         }
+
     });
 
     $(document).on('click', '.cell:not(.filled), .close', function () {
@@ -50,17 +53,22 @@
     });
 
     $(document).on('change', '.weaponType', function () {
+
         var weaponType = $(this).attr('value');
         chosenWeapon = weaponType;
         socket.emit('chooseWeapon', weaponType);
 
-        $('div.chooseWeapon').html("You've chosen <span class='bold'>" + weaponType + "</span>! Waiting for opponent!" );
+        if (!gameInProgress) {
+            $('div.chooseWeapon').addClass('hidden');
+            $('div.weaponChosen').html("You've chosen <span class='bold'>" + weaponType + "</span>! Waiting for opponent!" ).removeClass('hidden');
 
-        jQuery('table td').each(function(index, value) {
-            if ($(value).text() === $('div.username').text()) {
-                $(value).removeClass().addClass(weaponType);
-            }
-        })
+            $('table td').each(function(index, value) {
+                if ($(value).text() === $('div.username').text()) {
+                    $(value).removeClass().addClass(weaponType);
+                }
+            })
+        }
+
     });
 
     $(document).on('click', '.restartGame', function () {
@@ -97,12 +105,8 @@
         location.reload();
     });
 
-    /*socket.on('connect', function () {
-        socket.emit('isWeaponSelected');
-    });*/
-
     socket.on("whoIsOnline", function (data) {
-        var whoIsOnlineTable = jQuery(".whoOnline table");
+        var whoIsOnlineTable = $(".whoOnline table");
         whoIsOnlineTable.html("");
         if (data.length) {
             $(data).each(function (index, value) {
@@ -111,26 +115,32 @@
         } else {
             whoIsOnlineTable.html("<tr><td>Oops! No one is online... yet.</tr></td>");
         }
-
-
     });
 
     socket.on('startGame', function (data) {
-        console.log(data);
-        console.log('game started!!!');
-        $('div.chooseWeapon').html("Battle is in progress! <span class='bold'>" + data["crossPlayer"] + "</span> VS. <span class='bold'>" + data["circlePlayer"] + '</span>!');
+        gameInProgress = true;
+        $('div.chooseWeapon, div.weaponChosen').addClass('hidden');
+        $('div.battleStarted').html("Battle is in progress! <span class='bold'>" + data["crossPlayer"] + "</span> VS. <span class='bold'>" + data["circlePlayer"] + '</span>!').removeClass('hidden');
     });
 
     socket.on('restoreGameStatus', function (data) {
-        $('div.chooseWeapon').html("Battle is in progress! <span class='bold'>" + data["crossPlayer"] + "</span> VS. <span class='bold'>" + data["circlePlayer"] + '</span>!');
-        jQuery('table td').each(function(index, value) {
+
+        gameInProgress = true;
+
+        $('div.chooseWeapon, div.weaponChosen').addClass('hidden');
+        $('div.battleStarted').html("Battle is in progress! <span class='bold'>" + data["crossPlayer"] + "</span> VS. <span class='bold'>" + data["circlePlayer"] + '</span>!').removeClass('hidden');
+        $('table td').each(function(index, value) {
             if ($(value).text() === data['crossPlayer']) {
                 $(value).removeClass().addClass('cross');
             }
             if ($(value).text() === data['circlePlayer']) {
                 $(value).removeClass().addClass('circle');
             }
-        })
-    })
+        });
+    });
 
+    socket.on('youArePlayer!', function (weaponId) {
+        console.log(weaponId);
+        $('#' + weaponId).change();
+    })
 }());

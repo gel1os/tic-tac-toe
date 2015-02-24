@@ -106,17 +106,31 @@ io.sockets.on('connection', function(socket){
     });
 
     socket.on('chooseWeapon', function (data) {
+
         socket.chosenWeapon = data;
 
-        for(var prop in gameInfo) {
-            if(gameInfo.hasOwnProperty(prop)) {
-                if(gameInfo[prop] === socket.username) {
-                    gameInfo[prop] = '';
+        if (!gameInfo['gameStarted']) {
+
+            // check if this weapon has been chosen
+
+            for(var prop in gameInfo) {
+                if(gameInfo.hasOwnProperty(prop)) {
+                    if(gameInfo[prop] === socket.username) {
+                        gameInfo[prop] = '';
+                    }
                 }
             }
-        }
 
-        gameInfo[socket.chosenWeapon + 'Player'] = socket.username;
+            // assign player to chosen weapon
+
+            gameInfo[socket.chosenWeapon + 'Player'] = socket.username;
+
+            if (gameInfo['crossPlayer'] && gameInfo['circlePlayer']) {
+                gameInfo['gameStarted'] = true;
+                io.emit('startGame', gameInfo);
+            }
+
+        }
 
         var responseObj = {
             user: socket.username,
@@ -126,11 +140,6 @@ io.sockets.on('connection', function(socket){
         //io.emit('chooseWeapon', responseObj);
         socket.broadcast.emit('chooseWeapon', responseObj);
 
-        if (gameInfo['crossPlayer'] && gameInfo['circlePlayer']) {
-            gameInfo['gameStarted'] = true;
-            io.emit('startGame', gameInfo);
-
-        }
     });
 
     socket.on('restartGame', function () {
@@ -147,7 +156,13 @@ io.sockets.on('connection', function(socket){
         }*//*
     });*/
 
-    console.log('user arrived');
+    console.log('user arrived', socket.id);
+
+    io.emit('whoIsOnline', gameInfo['usersOnline']);
+
+    if (gameInfo['gameStarted'] === true) {
+        io.emit('restoreGameStatus', gameInfo);
+    }
 
     socket.on('saveUsername', function (data) {
         if (data) {
@@ -156,11 +171,19 @@ io.sockets.on('connection', function(socket){
                 return value === socket.username
             });
             if (!nameExists.length) {
+
                 gameInfo['usersOnline'].push(socket.username);
                 io.emit('whoIsOnline', gameInfo['usersOnline']);
 
                 if (gameInfo['gameStarted'] === true) {
-                    socket.emit('restoreGameStatus', gameInfo);
+                    io.emit('restoreGameStatus', gameInfo);
+
+                    if (socket.username === gameInfo['crossPlayer']) {
+                        io.to(socket.id).emit("youArePlayer!", 'cross');
+                    } else if (socket.username === gameInfo['circlePlayer']) {
+                        io.to(socket.id).emit("youArePlayer!", 'circle');
+                    }
+
                 }
             }
         }
@@ -174,6 +197,10 @@ io.sockets.on('connection', function(socket){
         }
 
         io.emit('whoIsOnline', gameInfo['usersOnline']);
+        if (gameInfo['gameStarted'] === true) {
+            io.emit('restoreGameStatus', gameInfo);
+            //console.log(gameInfo);
+        }
     });
 
     socket.on('logout', function () {
@@ -182,7 +209,11 @@ io.sockets.on('connection', function(socket){
             socket.username = null;
         }
         io.emit('whoIsOnline', gameInfo['usersOnline']);
-    })
+        if (gameInfo['gameStarted'] === true) {
+            socket.emit('restoreGameStatus', gameInfo);
+        }
+    });
+
 
 });
 

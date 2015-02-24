@@ -88,7 +88,9 @@ label.chosen {
     font-style: italic;
 }
 
-.chooseWeapon {
+.chooseWeapon,
+.weaponChosen,
+.battleStarted {
     margin-bottom: 10px;
 }
 
@@ -226,6 +228,7 @@ content {
 span.bold {
     font-weight: 700;
 }
+
 
 
 
