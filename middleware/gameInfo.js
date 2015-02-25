@@ -2,6 +2,7 @@ var gameInfo = {
     "usersOnline" : [],
     'crossPlayer': '',
     'circlePlayer': '',
-    'gameStarted': false
+    'gameStarted': false,
+    'waitingForOpponent': false
 };
 module.exports = gameInfo;

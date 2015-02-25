@@ -1,9 +1,11 @@
 (function(){
     var socket = io(),
         chosenWeapon,
-        gameInProgress = false;
+        gameInProgress = false,
+        username;
 
     function generateGrid(gridSize) {
+
         var arr = Array.apply(null, {length: gridSize}).map(Number.call, Number);
         $('.wrapper').prepend($('<div class="grid-container"></div>'));
         arr.forEach(function (n, i) {
@@ -13,14 +15,34 @@
             });
         });
 
-        $(".grid-container").append("<div class='pleaseLogin'><div class='close'>close</div><div class='text'>Please <a href='/login'>log in</a> to be able to play!</div></div>");
+        var pleaseLoginPopup =
+                "<div class='pleaseLogin'>" +
+                    "<div class='close'>close</div>" +
+                    "<div class='text'>Please <a href='/login'>log in</a> to be able to play!</div>" +
+                "</div>";
+
+        $(".grid-container").append(pleaseLoginPopup);
 
         return gridSize;
     }
 
+    function showBattleInfo(playersObj) {
+        $('div.battleStarted')
+            .html("Battle is in progress! <span class='bold'>" + playersObj["crossPlayer"] + "</span> VS. <span class='bold'>" + playersObj["circlePlayer"] + '</span>!')
+            .removeClass('hidden');
+    }
+
+    function showWaitOpponentMessage(player, weapon) {
+        $(".weaponChosen")
+            .html("Player " + "<span class='bold'>" + player + "</span> Has chosen <span class='bold'>" + weapon + '</span> and waits for your move!' )
+            .removeClass('hidden');
+    }
+
+
     $(document).ready(function () {
         generateGrid(3);
-        var username = $('.username').text();
+
+        username = $('.username').text();
 
         if (username) {
             socket.emit('saveUsername', username);
@@ -35,6 +57,7 @@
     });
 
     $(document).on('click', '.cell:not(.filled), .close', function () {
+
         if (isForbidden()) {
             $('.grid-container').toggleClass('forbidden');
             return false
@@ -49,7 +72,9 @@
         if (data['weapon']) {
             socket.emit('fillCell', data);
         }
+
         return false
+
     });
 
     $(document).on('change', '.weaponType', function () {
@@ -60,7 +85,9 @@
 
         if (!gameInProgress) {
             $('div.chooseWeapon').addClass('hidden');
-            $('div.weaponChosen').html("You've chosen <span class='bold'>" + weaponType + "</span>! Waiting for opponent!" ).removeClass('hidden');
+            $('div.weaponChosen')
+                .html("You've chosen <span class='bold'>" + weaponType + "</span>! Waiting for opponent!" )
+                .removeClass('hidden');
 
             $('table td').each(function(index, value) {
                 if ($(value).text() === $('div.username').text()) {
@@ -89,6 +116,7 @@
     });
 
     socket.on('chooseWeapon', function (data) {
+
         $('input[id=' + data.weapon + ']').attr('disabled', true);
         $('label[for=' + data.weapon + ']').addClass('chosen');
 
@@ -118,29 +146,69 @@
     });
 
     socket.on('startGame', function (data) {
+
         gameInProgress = true;
         $('div.chooseWeapon, div.weaponChosen').addClass('hidden');
-        $('div.battleStarted').html("Battle is in progress! <span class='bold'>" + data["crossPlayer"] + "</span> VS. <span class='bold'>" + data["circlePlayer"] + '</span>!').removeClass('hidden');
+        showBattleInfo(data);
+
     });
 
-    socket.on('restoreGameStatus', function (data) {
+    socket.on('restoreGameStatus', function (gameStatusObj) {
 
-        gameInProgress = true;
+        if (gameStatusObj["gameStarted"]) {
 
-        $('div.chooseWeapon, div.weaponChosen').addClass('hidden');
-        $('div.battleStarted').html("Battle is in progress! <span class='bold'>" + data["crossPlayer"] + "</span> VS. <span class='bold'>" + data["circlePlayer"] + '</span>!').removeClass('hidden');
+            // game in progress
+
+            gameInProgress = true;
+
+            $('div.chooseWeapon, div.weaponChosen').addClass('hidden');
+
+            showBattleInfo(gameStatusObj);
+
+        } else if ( gameStatusObj["waitingForOpponent"] ) {
+
+            // waiting for opponent
+
+            var weaponToDisable = gameStatusObj["crossPlayer"] ? 'cross' : 'circle',
+                playersName = gameStatusObj[weaponToDisable + "Player"];
+
+            if (username !== playersName) {
+                showWaitOpponentMessage(playersName, weaponToDisable);
+            } else {
+                $(".weaponChosen")
+                    .html("You've chosen " + "<span class='bold'>" + weaponToDisable + "</span> Waiting for opponent!")
+                    .removeClass('hidden');
+                $('.chooseWeapon').addClass('hidden');
+                $('#' + weaponToDisable).change();
+            }
+
+            $('input[id=' + weaponToDisable + ']').attr('disabled', true);
+            $('label[for=' + weaponToDisable + ']').addClass('chosen');
+
+        }
+
+        // add cross and circle icons in "Who is online?" table
+
         $('table td').each(function(index, value) {
-            if ($(value).text() === data['crossPlayer']) {
-                $(value).removeClass().addClass('cross');
+
+            function findPlayer(player, weapon) {
+                if ($(player).text() === gameStatusObj[weapon + 'Player']) {
+                    $(player).removeClass().addClass(weapon);
+                }
             }
-            if ($(value).text() === data['circlePlayer']) {
-                $(value).removeClass().addClass('circle');
-            }
+
+            findPlayer(value, 'cross');
+            findPlayer(value, 'circle');
+
         });
     });
 
     socket.on('youArePlayer!', function (weaponId) {
-        console.log(weaponId);
         $('#' + weaponId).change();
+    });
+
+    socket.on('waitingForOpponent', function(data) {
+        showWaitOpponentMessage(data.name, data.weapon);
     })
+
 }());

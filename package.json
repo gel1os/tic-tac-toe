@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "body-parser": "^1.11.0",
+    "bower": "^1.3.12",
     "connect": "^3.3.4",
     "connect-mongo": "^0.7.0",
     "connect-session": "0.0.1",
