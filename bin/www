@@ -112,6 +112,29 @@ io.sockets.on('connection', function(socket){
 
     socket.on('fillCell', function(data) {
         io.emit('fillCell', data);
+
+        console.log(data);
+
+        // detect whose turn to hit next
+
+        if (gameInfo['gameStarted']) {
+
+            var lastHitBy = data["weapon"];
+
+            if (lastHitBy === 'cross') {
+                gameInfo['turnToHit'] = gameInfo['circlePlayer'];
+            } else {
+                gameInfo['turnToHit'] = gameInfo['crossPlayer'];
+            }
+
+            io.emit('whoseTurn?', gameInfo['turnToHit']);
+
+        }
+
+        // save filled cells
+
+        gameInfo["filledCells"].push(data);
+
     });
 
     socket.on('chooseWeapon', function (data) {
@@ -142,9 +165,15 @@ io.sockets.on('connection', function(socket){
                 gameInfo['waitingForOpponent'] = false;
                 io.emit('startGame', gameInfo);
 
+                gameInfo['turnToHit'] = gameInfo['crossPlayer'];
+
+                io.emit('whoseTurn?', gameInfo['turnToHit']);
+
+
             } else {
 
                 // only one player is present, "waiting for opponent" event
+
                 gameInfo['waitingForOpponent'] = true;
 
                 var player = {
@@ -170,10 +199,13 @@ io.sockets.on('connection', function(socket){
     socket.on('restartGame', function () {
 
         io.emit('restartGame');
+
         gameInfo['gameStarted'] = false;
         gameInfo['waitingForOpponent'] = false;
         gameInfo['crossPlayer'] = '';
         gameInfo['circlePlayer'] = '';
+        gameInfo["filledCells"] = [];
+        gameInfo['turnToHit'] =  "";
 
     });
 

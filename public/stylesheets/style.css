@@ -90,7 +90,8 @@ label.chosen {
 
 .chooseWeapon,
 .weaponChosen,
-.battleStarted {
+.battleStarted,
+.whoseTurn {
     margin-bottom: 10px;
 }
 

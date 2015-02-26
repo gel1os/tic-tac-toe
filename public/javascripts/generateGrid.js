@@ -2,7 +2,8 @@
     var socket = io(),
         chosenWeapon,
         gameInProgress = false,
-        username;
+        username,
+        isYourTurnToHit;
 
     function generateGrid(gridSize) {
 
@@ -34,10 +35,22 @@
 
     function showWaitOpponentMessage(player, weapon) {
         $(".weaponChosen")
-            .html("Player " + "<span class='bold'>" + player + "</span> Has chosen <span class='bold'>" + weapon + '</span> and waits for your move!' )
+            .html("Player " + "<span class='bold'>" + player + "</span> has chosen <span class='bold'>" + weapon + '</span> and waits for your move!' )
             .removeClass('hidden');
     }
 
+    function showWhoseTurnToHit(user) {
+        if (user && user !== username) {
+            user += "'s";
+            isYourTurnToHit = false;
+        } else {
+            user = 'your';
+            isYourTurnToHit = true;
+        }
+
+        $('.whoseTurn').html("It's <span class='bold'>" + user + "</span> turn to hit!")
+            .removeClass('hidden');
+    }
 
     $(document).ready(function () {
         generateGrid(3);
@@ -60,6 +73,10 @@
 
         if (isForbidden()) {
             $('.grid-container').toggleClass('forbidden');
+            return false
+        }
+
+        if ( gameInProgress && !isYourTurnToHit) {
             return false
         }
 
@@ -120,8 +137,6 @@
         $('input[id=' + data.weapon + ']').attr('disabled', true);
         $('label[for=' + data.weapon + ']').addClass('chosen');
 
-        console.log(data.weapon);
-
         jQuery('table td').each(function(index, value) {
             if ($(value).text() === data.user) {
                 $(value).removeClass().addClass(data.weapon);
@@ -165,6 +180,19 @@
 
             showBattleInfo(gameStatusObj);
 
+            var player = gameStatusObj["turnToHit"];
+
+            if ( player && player !== username) {
+                player += "'s";
+                isYourTurnToHit = false;
+            } else {
+                player = 'your';
+                isYourTurnToHit = true;
+            }
+
+            $('.whoseTurn').html("It's <span class='bold'>" + player + "</span> turn to hit!")
+                .removeClass('hidden');
+
         } else if ( gameStatusObj["waitingForOpponent"] ) {
 
             // waiting for opponent
@@ -201,6 +229,16 @@
             findPlayer(value, 'circle');
 
         });
+
+        showWhoseTurnToHit(gameStatusObj['turnToHit']);
+
+        var filledCellsArr = gameStatusObj['filledCells'];
+
+        $(filledCellsArr).each(function (index, value) {
+            var matchedCell = $('.cell' + '.r' + value["data-row"] + '.c' + value["data-cell"] + ' .elem');
+            matchedCell.addClass(value['weapon']);
+        })
+
     });
 
     socket.on('youArePlayer!', function (weaponId) {
@@ -209,6 +247,12 @@
 
     socket.on('waitingForOpponent', function(data) {
         showWaitOpponentMessage(data.name, data.weapon);
+    });
+
+    socket.on('whoseTurn?', function(player) {
+
+        showWhoseTurnToHit(player);
+
     })
 
 }());

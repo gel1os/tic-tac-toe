@@ -3,6 +3,8 @@ var gameInfo = {
     'crossPlayer': '',
     'circlePlayer': '',
     'gameStarted': false,
-    'waitingForOpponent': false
+    'waitingForOpponent': false,
+    "filledCells": [],
+    'turnToHit': ""
 };
 module.exports = gameInfo;
