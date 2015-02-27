@@ -166,6 +166,12 @@
         $('div.chooseWeapon, div.weaponChosen').addClass('hidden');
         showBattleInfo(data);
 
+        $('.cell').removeClass('filled');
+
+        $('.grid-container .elem').removeClass('cross circle');
+
+        socket.emit('clearBoard');
+
     });
 
     socket.on('restoreGameStatus', function (gameStatusObj) {
@@ -190,8 +196,10 @@
                 isYourTurnToHit = true;
             }
 
-            $('.whoseTurn').html("It's <span class='bold'>" + player + "</span> turn to hit!")
-                .removeClass('hidden');
+            /*$('.whoseTurn').html("It's <span class='bold'>" + player + "</span> turn to hit!")
+                .removeClass('hidden');*/
+
+            showWhoseTurnToHit(gameStatusObj['turnToHit']);
 
         } else if ( gameStatusObj["waitingForOpponent"] ) {
 
@@ -230,7 +238,7 @@
 
         });
 
-        showWhoseTurnToHit(gameStatusObj['turnToHit']);
+
 
         var filledCellsArr = gameStatusObj['filledCells'];
 
