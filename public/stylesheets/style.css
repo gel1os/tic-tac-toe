@@ -202,6 +202,7 @@ content {
     height: 100%;
     border: 1px solid black;
     display: none;
+    z-index: 2;
 }
 
 .pleaseLogin div.text {
@@ -229,6 +230,54 @@ span.bold {
 .form-group {
     max-width: 400px;
 }
+
+.cell.crossed.horizontal::before {
+    content: "";
+    border: 2px solid black;
+    position: absolute;
+    top: 49%;
+    width: 101%;
+    z-index: 1;
+}
+
+
+.cell.crossed.vertical::after {
+    content: "";
+    border: 2px solid black;
+    position: absolute;
+    left: 49%;
+    height: 101%;
+    z-index: 1;
+    top: 0;
+}
+
+.cell.crossed.diagonalLeft::before {
+    content: "";
+    border: 2px solid black;
+    position: absolute;
+    z-index: 1;
+    top: 47%;
+    height: 4%;
+    left: -21%;
+    width: 143%;
+    -ms-transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+    transform: rotate(-135deg);
+}
+
+.cell.crossed.diagonalRight::after {
+    content: "";
+    border: 2px solid black;
+    position: absolute;
+    z-index: 1;
+    left: 48%;
+    height: 143%;
+    top: -20%;
+    -ms-transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
 
 
 

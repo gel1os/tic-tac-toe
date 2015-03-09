@@ -52,6 +52,52 @@
             .removeClass('hidden');
     }
 
+    function isBattleFinished() {
+
+        var setOfElements = {
+                "horizontal" : [$('.r0 .elem'), $('.r1 .elem'), $('.r2 .elem')],
+                'vertical' : [$('.c0 .elem'), $('.c1 .elem'), $('.c2 .elem')],
+                'diagonalLeft' : [$('.r0 .c0 .elem, .r1 .c1 .elem, .r2 .c2 .elem')],
+                'diagonalRight' : [$('.r0 .c2 .elem, .r1 .c1 .elem, .r2 .c0 .elem')]
+            },
+
+            finished = false;
+
+        function checkClassesEquality(elem) {
+            // get classes of chosen elements
+            var classes = $(elem).map(function(index, value) {
+                return $.trim($(value).attr('class').replace('elem', ''))
+            });
+
+            // check if all classes are equal
+            for (var i=0; i<classes.length; i++) {
+                if (classes[i] !== classes[0]) {
+                    return false;
+                }
+
+                if (!classes[0]) {
+                    return false
+                }
+
+            }
+            console.log($(elem).parent());
+            return true;
+        }
+
+        for (var key in setOfElements) {
+            $(setOfElements[key]).each(function(index, value) {
+                var passed = checkClassesEquality(value);
+                if (passed) {
+                    $(value).parent().addClass('crossed ' + key);
+                    finished = true;
+                }
+            });
+        }
+
+        return finished;
+
+    }
+
     $(document).ready(function () {
         generateGrid(3);
 
@@ -130,6 +176,9 @@
             elemToFill = chosenCell.find('.elem');
         chosenCell.addClass('filled');
         elemToFill.addClass(formData['weapon']);
+
+        isBattleFinished();
+
     });
 
     socket.on('chooseWeapon', function (data) {
@@ -197,7 +246,7 @@
             }
 
             /*$('.whoseTurn').html("It's <span class='bold'>" + player + "</span> turn to hit!")
-                .removeClass('hidden');*/
+             .removeClass('hidden');*/
 
             showWhoseTurnToHit(gameStatusObj['turnToHit']);
 
@@ -238,14 +287,15 @@
 
         });
 
-
-
+        // fill marked fields
         var filledCellsArr = gameStatusObj['filledCells'];
 
         $(filledCellsArr).each(function (index, value) {
             var matchedCell = $('.cell' + '.r' + value["data-row"] + '.c' + value["data-cell"] + ' .elem');
             matchedCell.addClass(value['weapon']);
-        })
+        });
+
+        isBattleFinished();
 
     });
 
