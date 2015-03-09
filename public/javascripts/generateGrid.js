@@ -8,7 +8,7 @@
     function generateGrid(gridSize) {
 
         var arr = Array.apply(null, {length: gridSize}).map(Number.call, Number);
-        $('.wrapper').prepend($('<div class="grid-container"></div>'));
+        $('.restartGame').before($('<div class="grid-container"></div>'));
         arr.forEach(function (n, i) {
             $('.grid-container').append($('<div class="row r' + n + '"></div>'));
             arr.forEach(function (_n) {

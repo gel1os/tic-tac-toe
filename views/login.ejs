@@ -7,30 +7,25 @@
     <% include ../views/partials/header.ejs %>
 </header>
 <section class="container">
-    <p>Log in or Register</p>
-    <p>Type your login and password. We will log you in if there is a match.<br>
-        Otherwise, you'll be registered.
+    <h1>Log in or Register</h1>
+    <p>Type your login and password. We will log you in if there is a match. Otherwise, you'll be registered.
     </p>
-    <form action="" class="form-horizontal login-form" name="login-form">
-        <div class="form-group">
-            <label for="input-username" class="col-lg-2 control-label">Name</label>
-            <div class="col-lg-10">
+    <div class="container">
+        <form action="" class="form-horizontal login-form" name="login-form">
+            <div class="form-group">
+                <label for="input-username" class="control-label">Name</label>
                 <input name="username" value="" type="text" class="form-control" id="input-username" placeholder="Name"/>
             </div>
-        </div>
-        <div class="form-group">
-            <label for="input-password" class="col-lg-2 control-label">Password</label>
-            <div class="col-lg-10">
+            <div class="form-group">
+                <label for="input-password" class="control-label">Password</label>
                 <input name="password" value="" type="password" class="form-control" id="input-password" placeholder="Password"/>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="col-lg-offset-2 col-lg-10">
+            <div class="form-group">
                 <button type="submit" class="btn btn-primary" data-loading-text="Loading...">Enter</button>
                 <span class="help-block error"></span>
             </div>
-        </div>
-    </form>
+        </form>
+    </div>
     <script>
         $(document.forms["login-form"]).on("submit", function () {
             var form = $(this);

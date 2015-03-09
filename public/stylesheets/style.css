@@ -144,15 +144,11 @@ span.notLoggedIn::before {
     height: 40px;
     position: absolute;
     left: -50px;
-    top: -5px;
+    top: 4px;
 }
 
 .username {
     display: inline-block;
-}
-
-.container {
-    margin-top: 10px;
 }
 
 content {
@@ -172,7 +168,7 @@ content {
 
 .whoOnline {
     display: inline-block;
-    vertical-align: top;
+    margin-top: 3px;
 }
 
 .whoOnline table td.circle::before {
@@ -228,6 +224,10 @@ content {
 
 span.bold {
     font-weight: 700;
+}
+
+.form-group {
+    max-width: 400px;
 }
 
 
