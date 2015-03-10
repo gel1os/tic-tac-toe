@@ -85,7 +85,9 @@
                     $(value).parent().addClass('crossed ' + key);
                     finished = true;
                     console.log(lastPlayer);
+                    $('.winner').text(lastPlayer);
                     $('body').addClass('finished');
+
                 }
             });
         }
