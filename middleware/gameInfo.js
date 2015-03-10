@@ -5,6 +5,7 @@ var gameInfo = {
     'gameStarted': false,
     'waitingForOpponent': false,
     "filledCells": [],
-    'turnToHit': ""
+    'turnToHit': "",
+    'lastHitPlayer': ''
 };
 module.exports = gameInfo;

@@ -1,4 +1,4 @@
-(function(){
+(function ($) {
     var socket = io(),
         chosenWeapon,
         gameInProgress = false,
@@ -8,34 +8,29 @@
     function generateGrid(gridSize) {
 
         var arr = Array.apply(null, {length: gridSize}).map(Number.call, Number);
+
         $('.restartGame').before($('<div class="grid-container"></div>'));
-        arr.forEach(function (n, i) {
+        arr.forEach(function (n) {
             $('.grid-container').append($('<div class="row r' + n + '"></div>'));
             arr.forEach(function (_n) {
                 $('.row.r' + n).append($('<div class="cell c' + _n + ' r' + n + '" data-row="' + n + '" data-cell="' + _n + '"><div class="elem"></div>'));
             });
         });
 
-        var pleaseLoginPopup =
-                "<div class='pleaseLogin'>" +
-                    "<div class='close'>close</div>" +
-                    "<div class='text'>Please <a href='/login'>log in</a> to be able to play!</div>" +
-                "</div>";
-
-        $(".grid-container").append(pleaseLoginPopup);
+        //$(".grid-container").append(pleaseLoginPopup);
 
         return gridSize;
     }
 
     function showBattleInfo(playersObj) {
         $('div.battleStarted')
-            .html("Battle is in progress! <span class='bold'>" + playersObj["crossPlayer"] + "</span> VS. <span class='bold'>" + playersObj["circlePlayer"] + '</span>!')
+            .html("Battle is in progress! <span class='bold'>" + playersObj.crossPlayer + "</span> VS. <span class='bold'>" + playersObj.circlePlayer + '</span>!')
             .removeClass('hidden');
     }
 
     function showWaitOpponentMessage(player, weapon) {
         $(".weaponChosen")
-            .html("Player " + "<span class='bold'>" + player + "</span> has chosen <span class='bold'>" + weapon + '</span> and waits for your move!' )
+            .html("Player " + "<span class='bold'>" + player + "</span> has chosen <span class='bold'>" + weapon + '</span> and waits for your move!')
             .removeClass('hidden');
     }
 
@@ -52,7 +47,7 @@
             .removeClass('hidden');
     }
 
-    function isBattleFinished() {
+    function isBattleFinished(lastPlayer) {
 
         var setOfElements = {
                 "horizontal" : [$('.r0 .elem'), $('.r1 .elem'), $('.r2 .elem')],
@@ -65,8 +60,8 @@
 
         function checkClassesEquality(elem) {
             // get classes of chosen elements
-            var classes = $(elem).map(function(index, value) {
-                return $.trim($(value).attr('class').replace('elem', ''))
+            var classes = $(elem).map(function (index, value) {
+                return $.trim($(value).attr('class').replace('elem', ''));
             });
 
             // check if all classes are equal
@@ -80,7 +75,6 @@
                 }
 
             }
-            console.log($(elem).parent());
             return true;
         }
 
@@ -90,10 +84,11 @@
                 if (passed) {
                     $(value).parent().addClass('crossed ' + key);
                     finished = true;
+                    console.log(lastPlayer);
+                    $('body').addClass('finished');
                 }
             });
         }
-
         return finished;
 
     }
@@ -118,7 +113,7 @@
     $(document).on('click', '.cell:not(.filled), .close', function () {
 
         if (isForbidden()) {
-            $('.grid-container').toggleClass('forbidden');
+            $('body').toggleClass('forbidden');
             return false
         }
 
@@ -129,7 +124,8 @@
         var data = {
             'data-row': $(this).attr('data-row'),
             'data-cell': $(this).attr('data-cell'),
-            'weapon': chosenWeapon
+            'weapon': chosenWeapon,
+            'player': username
         };
 
         if (data['weapon']) {
@@ -176,9 +172,7 @@
             elemToFill = chosenCell.find('.elem');
         chosenCell.addClass('filled');
         elemToFill.addClass(formData['weapon']);
-
-        isBattleFinished();
-
+        isBattleFinished(formData['player']);
     });
 
     socket.on('chooseWeapon', function (data) {
@@ -186,7 +180,7 @@
         $('input[id=' + data.weapon + ']').attr('disabled', true);
         $('label[for=' + data.weapon + ']').addClass('chosen');
 
-        jQuery('table td').each(function(index, value) {
+        $('table td').each(function(index, value) {
             if ($(value).text() === data.user) {
                 $(value).removeClass().addClass(data.weapon);
             }
@@ -245,9 +239,6 @@
                 isYourTurnToHit = true;
             }
 
-            /*$('.whoseTurn').html("It's <span class='bold'>" + player + "</span> turn to hit!")
-             .removeClass('hidden');*/
-
             showWhoseTurnToHit(gameStatusObj['turnToHit']);
 
         } else if ( gameStatusObj["waitingForOpponent"] ) {
@@ -295,7 +286,7 @@
             matchedCell.addClass(value['weapon']);
         });
 
-        isBattleFinished();
+        isBattleFinished(gameStatusObj["lastHitPlayer"]);
 
     });
 
@@ -313,4 +304,4 @@
 
     })
 
-}());
+}(jQuery));
