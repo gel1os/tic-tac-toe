@@ -9,6 +9,7 @@ body {
     border: 1px solid rgba(15, 13, 13, 0.63);
     display: inline-block;
     cursor: pointer;
+    position: relative;
 }
 
 .row {
