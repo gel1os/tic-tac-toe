@@ -207,6 +207,19 @@ body.finished .gameFinished{
     z-index: 2;
 }
 
+.gameFinished {
+    font-size: 30px;
+    line-height: 100px;
+}
+
+.gameFinished.winner {
+    background: url('/images/successKid.png') no-repeat scroll 50% 100% / 70% auto rgba(255, 255, 255, 0.9);
+}
+
+.gameFinished.loser {
+    background: url("/images/iKnowThatFeelBro.png") no-repeat scroll 50% 100% / 70% auto rgba(255, 255, 255, 0.9);
+}
+
 .pleaseLogin div.text {
     top: 140px;
     position: absolute;
