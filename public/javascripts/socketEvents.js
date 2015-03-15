@@ -65,14 +65,16 @@
 
         for (var key in setOfElements) {
             $(setOfElements[key]).each(function(index, value) {
-                var passed = checkClassesEquality(value);
+                var passed = checkClassesEquality(value),
+                    gameFinishedPopup = $('.gameFinished');
+
+
                 if (passed) {
                     var playerStatus = '',
                         finalMessage = 'Game Over! Winner is: ' + lastPlayer;
 
                     $(value).parent().addClass('crossed ' + key);
                     finished = true;
-                    //$('.winner').text(lastPlayer);
 
                     if (isPlayer && lastPlayer === username) {
                         playerStatus = 'winner';
@@ -80,11 +82,17 @@
 
                     } else if (isPlayer) {
                         playerStatus = 'loser';
-                        finalMessage = "Sorry, you've lost.. :'C"
+                        finalMessage = "Sorry, you've lost..."
                     }
 
-                    $('.gameFinished').addClass(playerStatus);
-                    $('.gameFinished').text(finalMessage);
+                    gameFinishedPopup.addClass(playerStatus).text(finalMessage);
+
+                    $('div.battleStarted')
+                        .html("Battle is over!")
+                        .removeClass('hidden');
+
+                    $('.whoseTurn').addClass('hidden');
+
                     body.addClass('finished');
 
                 }
