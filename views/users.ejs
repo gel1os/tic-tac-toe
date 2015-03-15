@@ -5,10 +5,8 @@
     <script src="/javascripts/makeActive.js"></script>
 </head>
 <body page-type="users">
-<header>
-    <% include ../views/partials/header.ejs %>
-</header>
-<content class="container">
+<% include ../views/partials/header.ejs %>
+<div class="container">
     <h1><%= title %></h1>
     <div class="panel panel-success">
         <div class="panel-heading">Players list</div>
@@ -20,7 +18,7 @@
 
         </table>
     </div>
-</content>
+</div>
 </body>
 <script>
     $.ajax({
