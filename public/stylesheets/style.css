@@ -299,6 +299,10 @@ span.winner {
     font-size: 21px;
 }
 
+.finished .whoseTurn {
+    display: none;
+}
+
 
 
 

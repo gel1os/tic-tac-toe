@@ -91,8 +91,6 @@
                         .html("Battle is over!")
                         .removeClass('hidden');
 
-                    $('.whoseTurn').addClass('hidden');
-
                     body.addClass('finished');
 
                 }
