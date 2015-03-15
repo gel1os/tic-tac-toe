@@ -31,6 +31,14 @@
             .removeClass('hidden');
     }
 
+    function preload(arrayOfImages) {
+        $(arrayOfImages).each(function(){
+            $('<img/>')[0].src = this;
+            // Alternatively you could use:
+            // (new Image()).src = this;
+        });
+    }
+
     function isBattleFinished(lastPlayer) {
 
         var setOfElements = {
@@ -101,6 +109,14 @@
     }
 
     $(document).ready(function () {
+
+        var images = [
+            "/images/yunouo.png",
+            '/images/successKid.png',
+            "/images/iKnowThatFeelBro.png"
+        ];
+
+        preload(images);
 
         username = $('.username').text();
 
