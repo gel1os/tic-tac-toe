@@ -89,6 +89,14 @@ function onListening() {
   debug('Listening on ' + bind);
 }
 
+var User = require('../models/user').User;
+var mongoose = require('../libs/mongoose');
+
+//drop data-base
+/*mongoose.connection.collections['users'].drop( function(err) {
+ console.log('collection dropped');
+});*/
+
 /**
 * Socket IO events
 * */
@@ -96,6 +104,23 @@ function onListening() {
 var io = require('socket.io')(server);
 
 var gameInfo = require('../middleware/gameInfo');
+
+function dropGameStatus(obj) {
+    for (var key in obj) {
+
+        if (key !== "usersOnline") {
+            var typeOfVal = typeof obj[key],
+                newVal = typeOfVal !== 'string'
+                    ? typeOfVal !== 'object'
+                        ? typeOfVal !== 'boolean'
+                            ? ''
+                            : false
+                        : []
+                    : '';
+            obj[key] = newVal;
+        }
+    }
+}
 
 io.sockets.on('connection', function(socket){
 
@@ -111,9 +136,8 @@ io.sockets.on('connection', function(socket){
     }
 
     socket.on('fillCell', function(data) {
-        io.emit('fillCell', data);
 
-        console.log(data);
+        io.emit('fillCell', data);
 
         // detect whose turn to hit next
 
@@ -134,7 +158,6 @@ io.sockets.on('connection', function(socket){
         }
 
         // save filled cells
-
         gameInfo["filledCells"].push(data);
 
     });
@@ -167,7 +190,6 @@ io.sockets.on('connection', function(socket){
                 io.emit('startGame', gameInfo);
 
                 gameInfo['turnToHit'] = gameInfo['crossPlayer'];
-
                 io.emit('whoseTurn?', gameInfo['turnToHit']);
 
             } else {
@@ -182,7 +204,6 @@ io.sockets.on('connection', function(socket){
                 };
 
                 socket.broadcast.emit('waitingForOpponent', player);
-
             }
 
         }
@@ -200,12 +221,7 @@ io.sockets.on('connection', function(socket){
 
         io.emit('restartGame');
 
-        gameInfo['gameStarted'] = false;
-        gameInfo['waitingForOpponent'] = false;
-        gameInfo['crossPlayer'] = '';
-        gameInfo['circlePlayer'] = '';
-        gameInfo["filledCells"] = [];
-        gameInfo['turnToHit'] =  "";
+        dropGameStatus(gameInfo);
 
     });
 
@@ -264,6 +280,7 @@ io.sockets.on('connection', function(socket){
         }
 
         io.emit('whoIsOnline', gameInfo['usersOnline']);
+
         if (gameInfo['gameStarted'] || gameInfo['waitingForOpponent']) {
             socket.emit('restoreGameStatus', gameInfo);
         }
@@ -271,6 +288,31 @@ io.sockets.on('connection', function(socket){
 
     socket.on('clearBoard', function () {
         gameInfo["filledCells"] = [];
-    })
+    });
 
+    socket.on('battleFinished', function(data) {
+        if (!gameInfo['gameFinished']) {
+
+            User.findOne({username: data.winner}, function (err, user) {
+                if (user) {
+                    var value = user.winner + 1;
+
+                    User.update({_id: user._id}, {$set: {winner: value}}, function(err){
+                    });
+
+                }
+            });
+
+            User.findOne({username: data.loser}, function (err, user) {
+                if (user) {
+                    var value = user.loser + 1;
+
+                    User.update({_id: user._id}, {$set: {loser: value}}, function(err){
+                    });
+                }
+            });
+
+            gameInfo['gameFinished'] = true;
+        }
+    })
 });

@@ -2,23 +2,31 @@ var crypto = require('crypto');
 var mongoose = require('../libs/mongoose'),
     Schema = mongoose.Schema;
 var schema = new Schema({
-   username: {
-       type: String,
-       unique: true,
-       required: true
-   },
-   hashedPassword: {
-       type: String,
-       required: true
-   },
-   salt: {
-       type: String,
-       required: true
-   },
-   created: {
-       type: Date,
-       default: Date.now
-   }
+    username: {
+        type: String,
+        unique: true,
+        required: true
+    },
+    hashedPassword: {
+        type: String,
+        required: true
+    },
+    salt: {
+        type: String,
+        required: true
+    },
+    created: {
+        type: Date,
+        default: Date.now
+    },
+    winner: {
+        type: Number,
+        default: 0
+    },
+    loser: {
+        type: Number,
+        default: 0
+    }
 });
 
 schema.methods.encryptPassword = function (password) {

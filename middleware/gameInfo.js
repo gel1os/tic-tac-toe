@@ -3,6 +3,7 @@ var gameInfo = {
     'crossPlayer': '',
     'circlePlayer': '',
     'gameStarted': false,
+    'gameFinished': false,
     'waitingForOpponent': false,
     "filledCells": [],
     'turnToHit': "",

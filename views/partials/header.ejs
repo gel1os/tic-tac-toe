@@ -33,7 +33,7 @@
     var socket = io();
     $('.logoutLink').click(function () {
 
-        var username = jQuery('.username').text();
+        var username = $('.username').text();
         if (username) {
             socket.emit('logout', username);
         }

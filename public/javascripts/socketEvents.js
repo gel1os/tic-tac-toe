@@ -4,7 +4,8 @@
         gameInProgress = false,
         username,
         isPlayer = false,
-        isYourTurnToHit;
+        isYourTurnToHit,
+        gameStat = {};
 
     function showBattleInfo(playersObj) {
         $('div.battleStarted')
@@ -34,12 +35,10 @@
     function preload(arrayOfImages) {
         $(arrayOfImages).each(function(){
             $('<img/>')[0].src = this;
-            // Alternatively you could use:
-            // (new Image()).src = this;
         });
     }
 
-    function isBattleFinished(lastPlayer) {
+    function isBattleFinished(lastPlayer, counterUpdated) {
 
         var setOfElements = {
                 "horizontal" : [$('.r0 .elem'), $('.r1 .elem'), $('.r2 .elem')],
@@ -76,7 +75,6 @@
                 var passed = checkClassesEquality(value),
                     gameFinishedPopup = $('.gameFinished');
 
-
                 if (passed) {
                     var playerStatus = '',
                         finalMessage = 'Game Over! Winner is: ' + lastPlayer;
@@ -86,7 +84,13 @@
 
                     if (isPlayer && lastPlayer === username) {
                         playerStatus = 'winner';
-                        finalMessage = 'Congrats! You win!'
+                        finalMessage = 'Congrats! You win!';
+
+                        var loser = gameStat['crossPlayer'] === username ? gameStat['circlePlayer'] : gameStat['crossPlayer'];
+
+                        if (!counterUpdated) {
+                            socket.emit('battleFinished', {'winner': username, 'loser': loser})
+                        }
 
                     } else if (isPlayer) {
                         playerStatus = 'loser';
@@ -230,6 +234,8 @@
 
     socket.on('startGame', function (data) {
 
+        gameStat = data;
+
         gameInProgress = true;
 
         if (username === data.circlePlayer || username === data.crossPlayer) {
@@ -248,6 +254,8 @@
     });
 
     socket.on('restoreGameStatus', function (gameStatusObj) {
+
+        gameStat = gameStatusObj;
 
         if (gameStatusObj["gameStarted"]) {
 
@@ -321,7 +329,7 @@
         });
 
         if (gameInProgress) {
-            isBattleFinished(gameStatusObj["lastHitPlayer"]);
+            isBattleFinished(gameStatusObj["lastHitPlayer"], gameStatusObj['gameFinished']);
         }
 
     });

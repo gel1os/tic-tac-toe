@@ -12,8 +12,6 @@
             });
         });
 
-        //$(".grid-container").append(pleaseLoginPopup);
-
         return gridSize;
     }
 

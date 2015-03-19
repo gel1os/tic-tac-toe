@@ -13,12 +13,6 @@ router.get('/', function(req, res, next) {
 
 router.get('/login', function (req, res, next) {
     res.render('login', { title: 'Login/Register', user: req.session.username });
-
-    //drop data-base
-    /*mongoose.connection.collections['users'].drop( function(err) {
-        console.log('collection dropped');
-    });*/
-
 });
 
 router.post('/login', function (req, res, next) {
@@ -58,7 +52,7 @@ router.post('/users', function(req, res, next) {
     var usersList = [];
     User.find({}, function(err, users) {
         users.forEach(function(user) {
-            usersList.push(user["username"])
+            usersList.push([user["username"], user["winner"], user["loser"]]);
         });
         res.status(200).send(usersList);
     });

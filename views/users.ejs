@@ -14,8 +14,9 @@
             <tr>
                 <th>#</th>
                 <th>Name</th>
+                <th>Victories</th>
+                <th>Loses</th>
             </tr>
-
         </table>
     </div>
 </div>
@@ -28,7 +29,7 @@
         statusCode: {
             200: function (data) {
                 $(data).each(function (index, value) {
-                    $('table').append("<tr><td>" + (parseInt(index)+1) + "</td><td>" + value + "</td></tr>")
+                    $('table').append("<tr><td>" + (parseInt(index)+1) + "</td><td>" + value[0] + "</td>"+"<td>" + value[1] + "<td>" + value[2] + "</td></tr>")
                 })
             },
             403: function (jqXHR) {
