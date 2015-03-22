@@ -385,7 +385,7 @@ ul li.message span.corner {
 }
 
 span.corner.left {
-    left: -10px;
+    left: -12px;
     border-width: 7.5px 16px 9.5px 0;
     border-color: transparent #449d44 transparent transparent;
 }
