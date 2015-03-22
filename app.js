@@ -68,4 +68,8 @@ app.use(function(err, req, res, next) {
     });
 });
 
+
+// local data-base "uri": "mongodb://localhost/tic-tac-toe”
+// heroku data-base "uri": "mongodb://heroku_app33524989:120rd55plc76sug4b9vjhcjfsr@ds051970.mongolab.com:51970/heroku_app33524989",
+
 module.exports = app;
