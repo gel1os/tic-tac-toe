@@ -5,7 +5,9 @@
         username,
         isPlayer = false,
         isYourTurnToHit,
-        gameStat = {};
+        gameStat = {},
+        $doc = $(document),
+        chatUl;
 
     function showBattleInfo(playersObj) {
         $('div.battleStarted')
@@ -112,13 +114,45 @@
 
     }
 
-    $(document).ready(function () {
+    function sendMessage(input) {
+
+        var message = input.val();
+
+        if (message) {
+            socket.emit('sendMessage', {user: username, message: message});
+        }
+        input.val('');
+    }
+
+    function appendMessageToChat(mesObj) {
+        var message = mesObj.message,
+            sender = mesObj.user,
+            messageLi,
+            noMessagesLi = $('.noMessages');
+
+        if (noMessagesLi.length) {
+            noMessagesLi.remove()
+        }
+
+        if (sender === username) {
+            messageLi = "<li class='message clearfix'><span class='you mesText'>" + message + "<span class='corner left'></span></span></li>";
+
+        } else {
+            messageLi = "<li class='message clearfix'><span class='sender'>" + sender + "</span><span class='mesText'>" + message + "<span class='corner right'></span></span></li>"
+        }
+
+        chatUl.append(messageLi);
+    }
+
+    $doc.ready(function () {
+
+        chatUl = $('.chat ul');
 
         var images = [
             "/images/yunouo.png",
             '/images/successKid.png',
             "/images/iKnowThatFeelBro.png"
-        ];
+            ];
 
         preload(images);
 
@@ -132,11 +166,25 @@
             $('.chooseWeapon input').attr('disabled', true);
             $('.chooseWeapon label').addClass("chosen");
             $('.restartGame').addClass('disabled');
+        } else {
+
+            // handlers for chat
+
+            $('#btn-input').keyup(function(e) {
+                if (e.which === 13) {
+                    sendMessage($(this));
+                }
+            });
+
+            $('#btn-chat').click(function () {
+                var textInput = $('#btn-input');
+                sendMessage(textInput);
+            });
         }
 
     });
 
-    $(document).on('click', '.cell:not(.filled), .close', function () {
+    $doc.on('click', '.cell:not(.filled), .close', function () {
 
         if (isForbidden()) {
             $('body').toggleClass('forbidden');
@@ -162,7 +210,7 @@
 
     });
 
-    $(document).on('change', '.weaponType', function () {
+    $doc.on('change', '.weaponType', function () {
 
         var weaponType = $(this).attr('value');
         chosenWeapon = weaponType;
@@ -183,7 +231,7 @@
 
     });
 
-    $(document).on('click', '.restartGame', function () {
+    $doc.on('click', '.restartGame', function () {
 
         $('.restartGame').addClass('disabled');
 
@@ -344,6 +392,20 @@
 
     socket.on('whoseTurn?', function(player) {
         showWhoseTurnToHit(player);
+    });
+
+    socket.on('sendMessage', function (messageObj) {
+        appendMessageToChat(messageObj)
+    });
+
+    socket.on('restoreChat', function (data) {
+        if (data.chatMessages.length) {
+            $(data.chatMessages).each(function (index, value) {
+                appendMessageToChat(value);
+            });
+        } else {
+            chatUl.append('<li class="noMessages">Oops! There are no messages... yet.</li>');
+        }
     })
 
 }(jQuery));

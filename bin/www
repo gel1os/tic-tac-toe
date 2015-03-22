@@ -126,6 +126,8 @@ io.sockets.on('connection', function(socket){
 
     console.log('user arrived');
 
+    socket.emit('restoreChat', gameInfo);
+
     io.emit('whoIsOnline', gameInfo['usersOnline']);
 
     if ( gameInfo['gameStarted'] || gameInfo['waitingForOpponent'] ) {
@@ -314,5 +316,10 @@ io.sockets.on('connection', function(socket){
 
             gameInfo['gameFinished'] = true;
         }
+    });
+
+    socket.on('sendMessage', function (data) {
+        io.emit('sendMessage', data);
+        gameInfo.chatMessages.push(data);
     })
 });
