@@ -5,10 +5,8 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var config = require('./config');
-var routes = require('./routes/index');
 var mongoose = require('mongoose');
 var session = require('cookie-session');
-
 var app = express();
 
 // view engine setup
@@ -22,20 +20,30 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
+/* session store [start] */
 var sessionStore = require('./libs/sessionStore');
-
 app.use(session({
     secret: config.get('session:secret'),
     key: config.get('session:key'),
     cookie: config.get('session:cookie'),
     store: sessionStore
 }));
+/* session store [end] */
 
-app.use('/', routes);
-app.use('/login', routes);
-app.use('/users', routes);
-app.use('/logout', routes);
+/* routes [start] */
+
+var mainPage = require('./routes/index').main;
+var users = require('./routes/users');
+var login = require('./routes/login');
+var logout = require('./routes/logout').logout;
+
+app.get('/', mainPage);
+app.get('/login', login.loginGetQuery);
+app.post('/login', login.loginPostQuery);
+app.get('/users', users.list);
+app.post('/logout', logout);
+
+/* routes [end] */
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -67,7 +75,6 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
-
 
 // local data-base "uri": "mongodb://localhost/tic-tac-toe”
 // heroku data-base "uri": "mongodb://heroku_app33524989:120rd55plc76sug4b9vjhcjfsr@ds051970.mongolab.com:51970/heroku_app33524989",

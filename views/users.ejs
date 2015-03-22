@@ -1,43 +1,32 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <% include ../views/partials/head.ejs %>
-    <script src="/javascripts/makeActive.js"></script>
-</head>
-<body page-type="users">
-<% include ../views/partials/header.ejs %>
-<div class="container">
-    <h1><%= title %></h1>
-    <div class="panel panel-success">
-        <div class="panel-heading">Players list</div>
-        <table class="table">
-            <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Victories</th>
-                <th>Loses</th>
-            </tr>
-        </table>
+    <head>
+        <% include ../views/partials/head.ejs %>
+        <script src="/javascripts/makeActive.js"></script>
+    </head>
+    <body page-type="users">
+    <% include ../views/partials/header.ejs %>
+    <div class="container">
+        <h1><%= title %></h1>
+        <div class="panel panel-success">
+            <div class="panel-heading">Players list</div>
+            <table class="table">
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Victories</th>
+                    <th>Loses</th>
+                </tr>
+                <% for(var i=0; i<list.length; i++) { %>
+                <tr>
+                    <td> <%= i + 1 %> </td>
+                    <td> <%= list[i][0] %> </td>
+                    <td> <%= list[i][1] %> </td>
+                    <td> <%= list[i][2] %> </td>
+                </tr>
+                <% } %>
+            </table>
+        </div>
     </div>
-</div>
-</body>
-<script>
-    $.ajax({
-        url: "/users",
-        method: "post",
-        data: {},
-        statusCode: {
-            200: function (data) {
-                $(data).each(function (index, value) {
-                    $('table').append("<tr><td>" + (parseInt(index)+1) + "</td><td>" + value[0] + "</td>"+"<td>" + value[1] + "<td>" + value[2] + "</td></tr>")
-                })
-            },
-            403: function (jqXHR) {
-                var error = JSON.parse(jqXHR.responseText);
-                console.log(error);
-                $('.error').html(error.message)
-            }
-        }
-    });
-</script>
+    </body>
 </html>

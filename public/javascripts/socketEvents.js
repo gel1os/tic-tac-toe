@@ -404,7 +404,7 @@
                 appendMessageToChat(value);
             });
         } else {
-            chatUl.append('<li class="noMessages">Oops! There are no messages... yet.</li>');
+            chatUl.append('<li class="noMessages">Oops! No messages here... yet.</li>');
         }
     })
 
