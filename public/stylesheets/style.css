@@ -326,6 +326,7 @@ span.winner {
     padding-top: 0;
     max-height: 500px;
     overflow: scroll;
+    overflow-x: hidden;
 }
 
 .chatWrapper.col-xs-12 {
