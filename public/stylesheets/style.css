@@ -132,18 +132,15 @@ li.nav-list.login {
 }
 
 a.logoutLink,
-a.login{
-    /*overflow: hidden;*/
+a.login {
+    float: right;
     cursor: pointer;
 }
 
-/*span.notLoggedIn,
 .username {
-    margin-right: 10px;
-    float: left;
-    height: 40px;
-    line-height: 50px;
-}*/
+   float: left;
+    margin-top: 17px;
+}
 
 a:hover {
     text-decoration: none;
