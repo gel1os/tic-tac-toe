@@ -166,7 +166,7 @@ span.notLoggedIn::before {
     text-indent: 50px;
     height: 40px;
     position: absolute;
-    left: -170px;
+    left: -180px;
     top: 4px;
     line-height: 40px;
 }
