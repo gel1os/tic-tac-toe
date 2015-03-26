@@ -133,24 +133,25 @@ li.nav-list.login {
 
 a.logoutLink,
 a.login{
-    overflow: hidden;
+    /*overflow: hidden;*/
     cursor: pointer;
 }
 
-span.notLoggedIn,
+/*span.notLoggedIn,
 .username {
     margin-right: 10px;
     float: left;
     height: 40px;
     line-height: 50px;
-}
+}*/
 
 a:hover {
     text-decoration: none;
 }
 
+/*
 span.notLoggedIn::before {
-    content: "";
+    content: "Y U NO logged in?";
     background: url("/images/yunouo.png") no-repeat;
     background-size: 100%;
     width: 40px;
@@ -158,6 +159,20 @@ span.notLoggedIn::before {
     position: absolute;
     left: -50px;
     top: 4px;
+}
+*/
+
+span.notLoggedIn::before {
+    content: "Y U NO logged in?";
+    background: url("/images/yunouo.png") no-repeat;
+    background-size: 27%;
+    width: 180px;
+    text-indent: 50px;
+    height: 40px;
+    position: absolute;
+    left: -170px;
+    top: 4px;
+    line-height: 40px;
 }
 
 content {
