@@ -42,7 +42,7 @@ schema.virtual('password')
     .get(function() { return this._plainPassword; });
 
 schema.methods.checkPassword = function (password) {
-    return this.encryptPassword(password) === this.hashedPassword
+    return this.encryptPassword(password) === this.hashedPassword;
 };
 
 exports.User = mongoose.model('User', schema);

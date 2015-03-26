@@ -20,7 +20,7 @@
                 <% for(var i=0; i<list.length; i++) { %>
                 <tr>
                     <td> <%= i + 1 %> </td>
-                    <td> <%= list[i][0] %> </td>
+                    <td><a href="/user/<%= list[i][0] %>"><%= list[i][0] %></a></td>
                     <td> <%= list[i][1] %> </td>
                     <td> <%= list[i][2] %> </td>
                 </tr>

@@ -1,3 +1,15 @@
-q<h1><%= message %></h1>
-<h2><%= error.status %></h2>
-<pre><%= error.stack %></pre>
+<!DOCTYPE html>
+<html>
+<head>
+    <% include ../views/partials/head.ejs %>
+    <script src="/javascripts/makeActive.js"></script>
+</head>
+<body page-type="error">
+<% include ../views/partials/header.ejs %>
+<div class="container">
+    <h1><%= title %></h1>
+    <h1><%= message %></h1>
+    <h2><%= status %></h2>
+</div>
+</body>
+</html>

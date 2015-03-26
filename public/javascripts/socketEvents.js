@@ -273,7 +273,7 @@
         whoIsOnlineTable.html("");
         if (data.length) {
             $(data).each(function (index, value) {
-                whoIsOnlineTable.append("<tr><td>" + value + "</tr></td>");
+                whoIsOnlineTable.append("<tr><td><a href='/user/"+ value + "'>" + value +"</a></tr></td>");
             })
         } else {
             whoIsOnlineTable.html("<tr><td>Oops! No one is online... yet.</tr></td>");

@@ -43,6 +43,7 @@ h1 {
     width: 100px;
     height: 100px;
     position: relative;
+    overflow: hidden;
 }
 
 .elem.cross:before, .elem.cross:after {
@@ -125,22 +126,27 @@ li.nav-item {
     text-decoration: underline;
 }
 
-li.nav-item.login {
+li.nav-list.login {
     float: right;
     margin-right: 0;
 }
 
-a.logoutLink {
-    display: inline-block !important;
+a.logoutLink,
+a.login{
+    overflow: hidden;
     cursor: pointer;
 }
 
-a.login {
-    display: inline-block !important;
+span.notLoggedIn,
+.username {
+    margin-right: 10px;
+    float: left;
+    height: 40px;
+    line-height: 50px;
 }
 
-span.notLoggedIn {
-    margin-right: 10px;
+a:hover {
+    text-decoration: none;
 }
 
 span.notLoggedIn::before {
@@ -152,10 +158,6 @@ span.notLoggedIn::before {
     position: absolute;
     left: -50px;
     top: 4px;
-}
-
-.username {
-    display: inline-block;
 }
 
 content {

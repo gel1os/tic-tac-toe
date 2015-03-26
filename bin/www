@@ -89,14 +89,6 @@ function onListening() {
   debug('Listening on ' + bind);
 }
 
-
-/* add socketIO events [start] */
-
-var User
-
 var io = require('socket.io')(server);
 var ioServerEvents = require('../libs/ioServerEvents');
 ioServerEvents(io);
-/* add socketIO events [end] */
-
-

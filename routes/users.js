@@ -26,5 +26,5 @@ exports.list = function(req, res) {
             user: req.session.username,
             list: listOfUsers
         });
-    })
+    });
 };

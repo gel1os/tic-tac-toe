@@ -9,41 +9,41 @@ var mongoose = require('mongoose');
 var session = require('cookie-session');
 var app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+function viewEngineSetup() {
+    app.set('views', path.join(__dirname, 'views'));
+    app.set('view engine', 'ejs');
 
-app.use(favicon(__dirname + '/public/images/favicon.ico'));
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+    app.use(favicon(__dirname + '/public/images/favicon.ico'));
+    app.use(logger('dev'));
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(cookieParser());
+    app.use(express.static(path.join(__dirname, 'public')));
+}
 
-/* session store [start] */
-var sessionStore = require('./libs/sessionStore');
-app.use(session({
-    secret: config.get('session:secret'),
-    key: config.get('session:key'),
-    cookie: config.get('session:cookie'),
-    store: sessionStore
-}));
-/* session store [end] */
+function configureSessionStore() {
+    var sessionStore = require('./libs/sessionStore');
+    app.use(session({
+        secret: config.get('session:secret'),
+        key: config.get('session:key'),
+        cookie: config.get('session:cookie'),
+        store: sessionStore
+    }));
+}
 
-/* routes [start] */
+function addRoutes() {
+    var routes = require('./routes/index');
+    app.get('/', routes.main);
+    app.get('/login', routes.loginGetQuery);
+    app.post('/login', routes.loginPostQuery);
+    app.get('/users', routes.list);
+    app.post('/logout', routes.logout);
+    app.get('/user/:name', routes.userInfo);
+}
 
-var mainPage = require('./routes/index').main;
-var users = require('./routes/users');
-var login = require('./routes/login');
-var logout = require('./routes/logout').logout;
-
-app.get('/', mainPage);
-app.get('/login', login.loginGetQuery);
-app.post('/login', login.loginPostQuery);
-app.get('/users', users.list);
-app.post('/logout', logout);
-
-/* routes [end] */
+viewEngineSetup();
+configureSessionStore();
+addRoutes();
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
