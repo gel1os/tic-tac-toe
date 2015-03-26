@@ -43,7 +43,6 @@ h1 {
     width: 100px;
     height: 100px;
     position: relative;
-    overflow: hidden;
 }
 
 .elem.cross:before, .elem.cross:after {
