@@ -137,38 +137,26 @@ a.login {
 }
 
 .username {
-   float: left;
-    margin-top: 17px;
+    float: left;
+    color: #a94442 !important;
 }
 
 a:hover {
     text-decoration: none;
 }
 
-/*
-span.notLoggedIn::before {
-    content: "Y U NO logged in?";
-    background: url("/images/yunouo.png") no-repeat;
-    background-size: 100%;
-    width: 40px;
-    height: 40px;
-    position: absolute;
-    left: -50px;
-    top: 4px;
-}
-*/
-
-span.notLoggedIn::before {
+li.notLoggedIn::after {
     content: "Y U NO logged in?";
     background: url("/images/yunouo.png") no-repeat;
     background-size: 27%;
     width: 180px;
     text-indent: 50px;
-    height: 40px;
     position: absolute;
-    left: -180px;
+    left: -170px;
     top: 4px;
-    line-height: 40px;
+    padding-top: 10px;
+    padding-bottom: 15px;
+    color: #a94442 !important;
 }
 
 content {
@@ -424,6 +412,39 @@ ul li.message span.sender {
     margin-top: 10px;
 }
 
+#preview {
+    width: 200px;
+    height: 200px;
+}
+
+#preview.hover {
+    background: rgba(98, 195, 98, 0.44);
+}
+
+.thumb {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
 
 
 

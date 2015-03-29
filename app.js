@@ -16,7 +16,7 @@ function viewEngineSetup() {
     app.use(favicon(__dirname + '/public/images/favicon.ico'));
     app.use(logger('dev'));
     app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(bodyParser.urlencoded({ extended: true }));
     app.use(cookieParser());
     app.use(express.static(path.join(__dirname, 'public')));
 }
@@ -39,6 +39,7 @@ function addRoutes() {
     app.get('/users', routes.list);
     app.post('/logout', routes.logout);
     app.get('/user/:name', routes.userInfo);
+    app.post('/user/:name', routes.uploadAvatar);
 }
 
 viewEngineSetup();

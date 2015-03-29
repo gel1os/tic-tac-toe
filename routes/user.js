@@ -33,3 +33,7 @@ exports.userDetails = function(req, res) {
         }
     });
 };
+
+exports.uploadAvatar = function (req, res) {
+    console.log(JSON.stringify(req.body));
+};

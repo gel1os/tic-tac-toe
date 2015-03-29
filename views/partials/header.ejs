@@ -20,7 +20,7 @@
                     <a href="/login" class="login">Login</a></li>
                 <% } else {%>
                 <li role="presentation" class="nav-list login pull-right">
-                    <div class="username"><a class="text-danger" href="/user/<%= user %>"><%= user %></a></div>
+                    <a class="username text-danger" href="/user/<%= user %>"><%= user %></a>
                     <a class="logoutLink" >Logout</a>
                 </li>
                 <%}%>

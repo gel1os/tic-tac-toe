@@ -32,4 +32,7 @@ exports.userInfo = function (req, res, next) {
     user.userDetails(req, res, next);
 };
 
+exports.uploadAvatar = function (req, res, next) {
+    user.uploadAvatar(req, res, next);
+};
 
