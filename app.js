@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var config = require('./config');
 var mongoose = require('mongoose');
 var session = require('cookie-session');
+var multer  = require('multer');
 var app = express();
 
 function viewEngineSetup() {
@@ -16,9 +17,21 @@ function viewEngineSetup() {
     app.use(favicon(__dirname + '/public/images/favicon.ico'));
     app.use(logger('dev'));
     app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(bodyParser.urlencoded({ extended: true}));
     app.use(cookieParser());
     app.use(express.static(path.join(__dirname, 'public')));
+
+    app.use(multer({ dest: './uploads/',
+        rename: function (fieldname, filename) {
+            return filename+Date.now();
+        },
+        onFileUploadStart: function (file) {
+            console.log(file.originalname + ' is starting ...');
+        },
+        onFileUploadComplete: function (file) {
+            console.log(file.fieldname + ' uploaded to  ' + file.path);
+        }
+    }));
 }
 
 function configureSessionStore() {

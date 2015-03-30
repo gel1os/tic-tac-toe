@@ -18,11 +18,15 @@ exports.userDetails = function(req, res) {
         var match = results[0];
 
         if (match) {
+
+            var allowEditing = req.session.username === match.username;
             res.render('user', {
                 title: 'User',
                 user: req.session.username,
-                matchedUser: match
+                matchedUser: match,
+                edit: allowEditing
             });
+
         } else {
             res.render('error', {
                 title: 'Error',
@@ -35,5 +39,5 @@ exports.userDetails = function(req, res) {
 };
 
 exports.uploadAvatar = function (req, res) {
-    console.log(JSON.stringify(req.body));
+    console.log(req.body, req.files);
 };

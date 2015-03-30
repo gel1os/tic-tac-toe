@@ -23,17 +23,21 @@
                 </table>
         </div>
 
-        <form method='post' data-type="json">
+        <% if (edit) {%>
+        <form id='avatar' role="form" method='post' action="/user/<%= matchedUser.username %>" enctype="multipart/form-data">
             <div class="file_upload">
                 Add avatar:
                 <span class="btn btn-default btn-file">
                     Browse <input type="file" class="avatar" accept="image/x-png, image/gif, image/jpeg">
                 </span>
                 <div id="preview" class="thumbnail"></div>
-                <button class="btn btn-default" type="submit">Upload</button>
+                <button id='uploadImage' class="btn btn-default" type="submit">Upload</button>
             </div>
         </form>
+        <% } %>
     </div>
+
+<% if (edit) { %>
 <script>
     function handleFileSelect(evt) {
 
@@ -79,5 +83,6 @@
     dropZone.addEventListener('drop', handleFileSelect, false);
 
 </script>
+<% } %>
 </body>
 </html>
