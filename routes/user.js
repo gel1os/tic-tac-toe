@@ -20,9 +20,10 @@ exports.userDetails = function(req, res) {
         if (match) {
 
             var allowEditing = req.session.username === match.username;
+
             res.render('user', {
                 title: 'User',
-                user: req.session.username,
+                user: {name: req.session.username, avatar: req.session.avatar},
                 matchedUser: match,
                 edit: allowEditing
             });
@@ -30,7 +31,7 @@ exports.userDetails = function(req, res) {
         } else {
             res.render('error', {
                 title: 'Error',
-                user: req.session.username,
+                user: {name: req.session.username, avatar: req.session.avatar},
                 message: 'Sorry, there is no such user',
                 status: 404
             });
@@ -38,6 +39,4 @@ exports.userDetails = function(req, res) {
     });
 };
 
-exports.uploadAvatar = function (req, res) {
-    console.log(req.body, req.files);
-};
+

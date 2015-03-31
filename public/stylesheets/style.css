@@ -145,7 +145,7 @@ a:hover {
     text-decoration: none;
 }
 
-li.notLoggedIn::after {
+span.notLoggedIn::after {
     content: "Y U NO logged in?";
     background: url("/images/yunouo.png") no-repeat;
     background-size: 27%;

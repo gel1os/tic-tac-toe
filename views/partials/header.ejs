@@ -14,13 +14,14 @@
                 <li role="presentation" class="nav-list users"><a href="/users">Users</a></li>
            </ul>
            <ul class="nav navbar-nav navbar-right">
-                <% if (!user) {%>
+                <% if (!user.name) {%>
                 <li role="presentation" class="nav-list login pull-right">
                     <span class="notLoggedIn text-danger"></span>
                     <a href="/login" class="login">Login</a></li>
                 <% } else {%>
                 <li role="presentation" class="nav-list login pull-right">
-                    <a class="username text-danger" href="/user/<%= user %>"><%= user %></a>
+                    <img src="<%= user.avatar %>" alt=""/>
+                    <a class="username text-danger" href="/user/<%= user.name %>"><%= user.name %></a>
                     <a class="logoutLink" >Logout</a>
                 </li>
                 <%}%>

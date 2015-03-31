@@ -20,6 +20,10 @@
                         <td>Registered:</td>
                         <td><%= matchedUser.created %></td>
                     </tr>
+                    <tr>
+                        <td>Avatar:</td>
+                        <td><img src="<%= matchedUser.avatar %>" alt=""/></td>
+                    </tr>
                 </table>
         </div>
 
@@ -28,7 +32,7 @@
             <div class="file_upload">
                 Add avatar:
                 <span class="btn btn-default btn-file">
-                    Browse <input type="file" class="avatar" accept="image/x-png, image/gif, image/jpeg">
+                    Browse <input type="file" name="files" class="avatar" accept="image/x-png, image/gif, image/jpeg">
                 </span>
                 <div id="preview" class="thumbnail"></div>
                 <button id='uploadImage' class="btn btn-default" type="submit">Upload</button>

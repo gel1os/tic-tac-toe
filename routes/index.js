@@ -7,9 +7,14 @@ var usersList = require('../routes/users');
 var user = require('../routes/user');
 
 exports.main = function(req, res, next) {
-    var username = req.session.username,
-        forbidden = username ? false : true;
-    res.render('index', { title: 'Tic-tac-toe', user: username, onlineUsers: gameInfo, forbidden: forbidden});
+
+    var userObj = {
+            name: req.session.username,
+            avatar: req.session.avatar
+        },
+
+        forbidden = userObj.name ? false : true;
+    res.render('index', { title: 'Tic-tac-toe', user: userObj, onlineUsers: gameInfo, forbidden: forbidden});
 };
 
 exports.loginGetQuery = function (req, res, next) {
@@ -30,9 +35,5 @@ exports.list = function (req, res, next) {
 
 exports.userInfo = function (req, res, next) {
     user.userDetails(req, res, next);
-};
-
-exports.uploadAvatar = function (req, res, next) {
-    user.uploadAvatar(req, res, next);
 };
 

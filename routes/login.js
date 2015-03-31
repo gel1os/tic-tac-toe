@@ -3,7 +3,7 @@ var mongoose = require('../libs/mongoose');
 var session = require('cookie-session');
 
 exports.loginGetQuery = function (req, res, next) {
-   res.render('login', { title: 'Login/Register', user: req.session.username });
+   res.render('login', { title: 'Login/Register', user: {name: req.session.username, avatar: req.session.avatar} });
 };
 
 exports.loginPostQuery = function (req, res, next) {
@@ -24,6 +24,7 @@ exports.loginPostQuery = function (req, res, next) {
 
                 req.session.user = user._id;
                 req.session.username = username;
+                req.session.avatar = user.avatar;
                 res.send({});
 
             } else {
@@ -43,6 +44,7 @@ exports.loginPostQuery = function (req, res, next) {
                 if (err) return next(err);
                 req.session.user = newUser._id;
                 req.session.username = newUser.username;
+                req.session.avatar = newUser.avatar;
                 res.send({});
             });
 

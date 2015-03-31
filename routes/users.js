@@ -23,7 +23,7 @@ exports.list = function(req, res) {
         var listOfUsers = results[0];
         res.render('users', {
             title: 'Players',
-            user: req.session.username,
+            user: {name: req.session.username, avatar: req.session.avatar},
             list: listOfUsers
         });
     });

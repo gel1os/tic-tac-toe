@@ -26,6 +26,11 @@ var schema = new Schema({
     loser: {
         type: Number,
         default: 0
+    },
+
+    avatar: {
+        type: String,
+        default: ''
     }
 });
 
