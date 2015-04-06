@@ -8,6 +8,8 @@ var config = require('./config');
 var mongoose = require('mongoose');
 var session = require('cookie-session');
 var multer = require('multer');
+var fs = require('fs');
+var mkdirp = require('mkdirp');
 var app = express();
 var User = require('./models/user').User;
 var async = require('async');
@@ -21,8 +23,11 @@ function viewEngineSetup() {
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true}));
     app.use(cookieParser());
+
+    /* public folders */
     app.use(express.static(path.join(__dirname, 'public')));
     app.use("/uploads", express.static(path.join(__dirname, 'uploads')));
+
 }
 
 function configureSessionStore() {
@@ -44,49 +49,61 @@ function addRoutes() {
     app.post('/logout', routes.logout);
     app.get('/user/:name', routes.userInfo);
 
-    app.post('/user/:name', multer({ dest: './uploads/',
+    app.post('/user/:name', multer({
+        dest: './uploads/',
+        limits: {
+            fileSize: 1000000,
+            files: 1
+        },
 
         rename: function (fieldname, filename, req) {
             return 'avatar_' + req.params.name;
         },
 
-        onFileUploadComplete: function (file, req, res) {
+        changeDest: function(dest, req, res) {
+            var stat = null;
 
-            async.series([
-                function(callback) {
-                    User.findOne({username: req.session.username}, function (err, user) {
-                        if (user) {
-                            User.update({_id: user._id}, {$set: { avatar: '/' + file.path }}, function(err){
-                                callback(null, user)
-                            });
-                        }
+            dest += 'avatars/' + req.params.name;
+
+            try {
+                stat = fs.statSync(dest);
+            } catch(err) {
+                mkdirp(dest, function (err) {
+                    if (err) console.error(err);
+                    else console.log('pow!')
+                });
+            }
+
+            if (stat && !stat.isDirectory()) {
+                throw new Error('Directory cannot be created because an inode of a different type exists at "' + dest + '"');
+            }
+            return dest;
+        },
+
+        /*onFileUploadStart: function(file, req, res) {
+
+            var filePath = './uploads/avatars/' + req.params.name;
+
+            fs.readdir(filePath, function (err, files) {
+
+                if (!files.length) return;
+
+                files.forEach(function(filename) {
+                    fs.unlink(filePath + '/' + filename, function (err, next) {
+                        if (err) console.log(err);
                     });
-                }
-            ], function(err, results) {
-
-                if (err) {
-                    throw err;
-                }
-
-                var match = results[0];
-
-                if (match) {
-                    res.redirect(req.get('referer'));
-                } else {
-                    res.render('error', {
-                        title: 'Error',
-                        user: req.session.username,
-                        message: 'Sorry, there is no such user',
-                        status: 404
-                    });
-                }
+                });
             });
+        },*/
+
+        onFileUploadComplete: function (file, req, res) {
+            routes.uploadAvatar(file, req, res);
         }
+        
     }), function (req, res) {
 
     });
 }
-
 
 viewEngineSetup();
 configureSessionStore();

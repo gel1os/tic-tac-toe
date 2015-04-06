@@ -139,6 +139,13 @@ a.login {
 .username {
     float: left;
     color: #a94442 !important;
+    padding: 10px 0 5px 0 !important;
+}
+
+@media (max-width : 768px) {
+    .username {
+        padding: 5px 0 !important;
+    }
 }
 
 a:hover {
@@ -152,7 +159,7 @@ span.notLoggedIn::after {
     width: 180px;
     text-indent: 50px;
     position: absolute;
-    left: -170px;
+    left: -180px;
     top: 4px;
     padding-top: 10px;
     padding-bottom: 15px;
@@ -415,6 +422,7 @@ ul li.message span.sender {
 #preview {
     width: 200px;
     height: 200px;
+    margin-top: 10px;
 }
 
 #preview.hover {
@@ -446,10 +454,50 @@ ul li.message span.sender {
     display: block;
 }
 
+.avatar {
+    width: 32px !important;
+    height: 32px !important;
+}
 
 
+form#avatar {
+    position: relative;
+}
 
+form#avatar .alert.alert-danger {
+    position: absolute;
+    left: 210px;
+    top: 45px;
+}
 
+.avatarBig {
+    max-width: 170px;
+    height: auto;
+}
 
+tr .progress {
+    background: #d9534f;
+    margin-bottom: 0;
+    cursor: pointer;
+}
 
+.tooltip-inner span.green {
+    color: #449d44;
+}
 
+.tooltip-inner span.red {
+    color: #d9534f;
+    background: none;
+}
+
+.glyphicon {
+    top: 3px;
+    cursor: pointer;
+}
+
+.changeAvatar {
+    color: #337ab7;
+    text-decoration: underline;
+    cursor: pointer;
+    display: inline-block;
+}

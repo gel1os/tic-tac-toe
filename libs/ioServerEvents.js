@@ -15,14 +15,14 @@ module.exports = function (client) {
 
             if (key !== "usersOnline") {
                 var typeOfVal = typeof obj[key],
-                    newVal = typeOfVal !== 'string'
+                    emptyVal = typeOfVal !== 'string'
                         ? typeOfVal !== 'object'
                             ? typeOfVal !== 'boolean'
                                 ? ''
                                 : false
                             : []
                         : '';
-                obj[key] = newVal;
+                obj[key] = emptyVal;
             }
         }
     }
@@ -38,7 +38,6 @@ module.exports = function (client) {
         if ( gameInfo['gameStarted'] || gameInfo['waitingForOpponent'] ) {
 
             // game in progress or waiting for opponent
-
             client.emit('restoreGameStatus', gameInfo);
         }
 
@@ -70,6 +69,10 @@ module.exports = function (client) {
         });
 
         socket.on('chooseWeapon', function (data) {
+
+            if (!socket.username) {
+                return
+            }
 
             socket.chosenWeapon = data;
 
@@ -125,11 +128,10 @@ module.exports = function (client) {
         });
 
         socket.on('restartGame', function () {
-
-            client.emit('restartGame');
-
-            dropGameStatus(gameInfo);
-
+            if (socket.username) {
+                client.emit('restartGame');
+                dropGameStatus(gameInfo);
+            }
         });
 
         socket.on('saveUsername', function (data) {
@@ -201,7 +203,7 @@ module.exports = function (client) {
 
         socket.on('battleFinished', function(data) {
             if (!gameInfo['gameFinished']) {
-
+                
                 User.findOne({username: data.winner}, function (err, user) {
                     if (user) {
                         var value = user.winner + 1;

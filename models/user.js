@@ -30,7 +30,7 @@ var schema = new Schema({
 
     avatar: {
         type: String,
-        default: ''
+        default: '/images/derp.png'
     }
 });
 

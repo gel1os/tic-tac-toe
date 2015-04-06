@@ -110,6 +110,7 @@
                 }
             });
         }
+
         return finished;
 
     }
@@ -156,7 +157,7 @@
 
         preload(images);
 
-        username = $('.username').text();
+        username = $('a.username span').text();
 
         if (username) {
             socket.emit('saveUsername', username);
@@ -223,7 +224,7 @@
                 .removeClass('hidden');
 
             $('table td').each(function(index, value) {
-                if ($(value).text() === $('div.username').text()) {
+                if ($(value).text() === $('a.username span').text()) {
                     $(value).removeClass().addClass(weaponType);
                 }
             })
@@ -258,6 +259,7 @@
         $('label[for=' + data.weapon + ']').addClass('chosen');
 
         $('table td').each(function(index, value) {
+
             if ($(value).text() === data.user) {
                 $(value).removeClass().addClass(data.weapon);
             }
@@ -273,7 +275,10 @@
         whoIsOnlineTable.html("");
         if (data.length) {
             $(data).each(function (index, value) {
-                whoIsOnlineTable.append("<tr><td><a href='/user/"+ value + "'>" + value +"</a></tr></td>");
+
+                value = $.trim(value);
+
+                whoIsOnlineTable.append("<tr><td><a href='/user/"+value+"'>" + value +"</a></tr></td>");
             })
         } else {
             whoIsOnlineTable.html("<tr><td>Oops! No one is online... yet.</tr></td>");
@@ -406,6 +411,6 @@
         } else {
             chatUl.append('<li class="noMessages">Oops! No messages here... yet.</li>');
         }
-    })
+    });
 
 }(jQuery));

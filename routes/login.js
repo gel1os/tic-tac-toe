@@ -3,7 +3,7 @@ var mongoose = require('../libs/mongoose');
 var session = require('cookie-session');
 
 exports.loginGetQuery = function (req, res, next) {
-   res.render('login', { title: 'Login/Register', user: {name: req.session.username, avatar: req.session.avatar} });
+    res.render('login', { title: 'Login/Register', user: {name: req.session.username, avatar: req.session.avatar} });
 };
 
 exports.loginPostQuery = function (req, res, next) {

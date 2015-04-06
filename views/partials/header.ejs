@@ -20,8 +20,11 @@
                     <a href="/login" class="login">Login</a></li>
                 <% } else {%>
                 <li role="presentation" class="nav-list login pull-right">
-                    <img src="<%= user.avatar %>" alt=""/>
-                    <a class="username text-danger" href="/user/<%= user.name %>"><%= user.name %></a>
+
+                    <a class="username text-danger" href="/user/<%= user.name %>">
+                        <img class='avatar' src="<%= user.avatar %>" alt=""/>
+                        <span><%= user.name %></span>
+                    </a>
                     <a class="logoutLink" >Logout</a>
                 </li>
                 <%}%>
