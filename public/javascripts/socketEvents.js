@@ -62,6 +62,18 @@
         return true;
     }
 
+    function createAlert(message) {
+        return '<div class="alert alert-danger" role="alert"><strong>Oh snap!</strong> ' + message + '</div>';
+    }
+
+    function appendAlert(el) {
+        $('.btn.restartGame').after(el).fadeIn(300);
+
+        setTimeout(function () {
+            $('.alert').fadeOut(300, function(){ $(this).remove();});
+        }, 5000);
+    }
+
     function isBattleFinished(lastPlayer, counterUpdated) {
 
         var setOfElements = {
@@ -249,8 +261,13 @@
 
         $('.restartGame').addClass('disabled');
 
-        if (!isForbidden()) {
+        console.log(username, gameStat);
+
+        if ( !isForbidden() && (username === gameStat['circlePlayer'] || username === gameStat['crossPlayer']) ) {
             socket.emit('restartGame');
+        } else {
+            var alert = createAlert("You've got no power here!");
+            appendAlert(alert);
         }
     });
 
