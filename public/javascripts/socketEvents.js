@@ -164,7 +164,8 @@
         var images = [
             "/images/yunouo.png",
             '/images/successKid.png',
-            "/images/iKnowThatFeelBro.png"
+            "/images/iKnowThatFeelBro.png",
+            '/images/AUFKM.png'
         ];
 
         preload(images);
