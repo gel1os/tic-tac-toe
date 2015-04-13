@@ -261,8 +261,6 @@
 
         $('.restartGame').addClass('disabled');
 
-        console.log(username, gameStat);
-
         if ( !isForbidden() && (username === gameStat['circlePlayer'] || username === gameStat['crossPlayer']) ) {
             socket.emit('restartGame');
         } else {
