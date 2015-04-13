@@ -21,6 +21,22 @@ h1 {
     margin-left: 0;
 }
 
+.row.r0 .cell {
+    border-top: 0;
+}
+
+.row.r2 .cell {
+    border-bottom: 0;
+}
+
+.cell.c0 {
+    border-left: 0;
+}
+
+.cell.c2 {
+    border-right: 0;
+}
+
 .grid-container {
     display: inline-block;
     position: relative;
@@ -234,6 +250,10 @@ body.finished .gameFinished{
 
 .gameFinished.loser {
     background: url("/images/iKnowThatFeelBro.png") no-repeat scroll 50% 100% / 70% auto rgba(255, 255, 255, 0.9);
+}
+
+.gameFinished.draw {
+    background: url("/images/AUFKM.png") no-repeat rgba(255, 255, 255, 0.9);
 }
 
 .pleaseLogin div.text {

@@ -31,12 +31,17 @@ module.exports = function (client) {
 
         console.log('user arrived');
 
+        socket.on('dropDataBase', function () {
+            mongoose.connection.collections['users'].drop( function(err) {
+                console.log('collection dropped');
+            });
+        });
+
         socket.emit('restoreChat', gameInfo);
 
         client.emit('whoIsOnline', gameInfo['usersOnline']);
 
         if ( gameInfo['gameStarted'] || gameInfo['waitingForOpponent'] ) {
-
             // game in progress or waiting for opponent
             client.emit('restoreGameStatus', gameInfo);
         }
@@ -230,6 +235,11 @@ module.exports = function (client) {
         socket.on('sendMessage', function (data) {
             client.emit('sendMessage', data);
             gameInfo.chatMessages.push(data);
+        });
+
+        socket.on('draw', function () {
+            gameInfo['gameFinished'] = true;
+            client.emit('draw');
         })
     });
 };

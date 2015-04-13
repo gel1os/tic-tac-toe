@@ -35,45 +35,48 @@
     }
 
     function preload(arrayOfImages) {
-        $(arrayOfImages).each(function(){
+        $(arrayOfImages).each(function () {
             $('<img/>')[0].src = this;
         });
+    }
+
+    function checkClassesEquality(elem) {
+
+        // get classes of chosen elements
+        var classes = $(elem).map(function (index, value) {
+            return $.trim($(value).attr('class').replace('elem', ''));
+        });
+
+        // check if all classes are equal
+        for (var i = 0; i < classes.length; i++) {
+
+            if (classes[i] !== classes[0]) {
+                return false;
+            }
+
+            if (!classes[0]) {
+                return false
+            }
+        }
+
+        return true;
     }
 
     function isBattleFinished(lastPlayer, counterUpdated) {
 
         var setOfElements = {
-                "horizontal" : [$('.r0 .elem'), $('.r1 .elem'), $('.r2 .elem')],
-                'vertical' : [$('.c0 .elem'), $('.c1 .elem'), $('.c2 .elem')],
-                'diagonalLeft' : [$('.r0 .c0 .elem, .r1 .c1 .elem, .r2 .c2 .elem')],
-                'diagonalRight' : [$('.r0 .c2 .elem, .r1 .c1 .elem, .r2 .c0 .elem')]
+                "horizontal": [$('.r0 .elem'), $('.r1 .elem'), $('.r2 .elem')],
+                'vertical': [$('.c0 .elem'), $('.c1 .elem'), $('.c2 .elem')],
+                'diagonalLeft': [$('.r0 .c0 .elem, .r1 .c1 .elem, .r2 .c2 .elem')],
+                'diagonalRight': [$('.r0 .c2 .elem, .r1 .c1 .elem, .r2 .c0 .elem')]
             },
             body = $('body'),
+            $cells = $('.cell'),
             finished = false;
 
-        function checkClassesEquality(elem) {
-            // get classes of chosen elements
-            var classes = $(elem).map(function (index, value) {
-                return $.trim($(value).attr('class').replace('elem', ''));
-            });
-
-            // check if all classes are equal
-            for (var i=0; i<classes.length; i++) {
-                if (classes[i] !== classes[0]) {
-                    return false;
-                }
-
-                if (!classes[0]) {
-                    return false
-                }
-
-            }
-
-            return true;
-        }
-
         for (var key in setOfElements) {
-            $(setOfElements[key]).each(function(index, value) {
+
+            $(setOfElements[key]).each(function (index, value) {
                 var passed = checkClassesEquality(value),
                     gameFinishedPopup = $('.gameFinished');
 
@@ -82,6 +85,7 @@
                         finalMessage = 'Game Over! Winner is: ' + lastPlayer;
 
                     $(value).parent().addClass('crossed ' + key);
+
                     finished = true;
 
                     if (isPlayer && lastPlayer === username) {
@@ -111,8 +115,16 @@
             });
         }
 
-        return finished;
+        if (!finished && $('.elem.cross, .elem.circle').length === $cells.length) {
 
+            finished = true;
+            socket.emit('draw');
+            socket.emit('battleFinished', {});
+            $('.gameFinished').addClass('draw').text('Draw :|');
+
+        }
+
+        return finished;
     }
 
     function sendMessage(input) {
@@ -153,7 +165,7 @@
             "/images/yunouo.png",
             '/images/successKid.png',
             "/images/iKnowThatFeelBro.png"
-            ];
+        ];
 
         preload(images);
 
@@ -171,7 +183,7 @@
 
             // handlers for chat
 
-            $('#btn-input').keyup(function(e) {
+            $('#btn-input').keyup(function (e) {
                 if (e.which === 13) {
                     sendMessage($(this));
                 }
@@ -192,7 +204,7 @@
             return false
         }
 
-        if ( gameInProgress && !isYourTurnToHit) {
+        if (gameInProgress && !isYourTurnToHit) {
             return false
         }
 
@@ -220,10 +232,10 @@
         if (!gameInProgress) {
             $('div.chooseWeapon').addClass('hidden');
             $('div.weaponChosen')
-                .html("You've chosen <span class='bold'>" + weaponType + "</span>! Waiting for opponent!" )
+                .html("You've chosen <span class='bold'>" + weaponType + "</span>! Waiting for opponent!")
                 .removeClass('hidden');
 
-            $('table td').each(function(index, value) {
+            $('table td').each(function (index, value) {
                 if ($(value).text() === $('a.username span').text()) {
                     $(value).removeClass().addClass(weaponType);
                 }
@@ -258,7 +270,7 @@
         $('input[id=' + data.weapon + ']').attr('disabled', true);
         $('label[for=' + data.weapon + ']').addClass('chosen');
 
-        $('table td').each(function(index, value) {
+        $('table td').each(function (index, value) {
 
             if ($(value).text() === data.user) {
                 $(value).removeClass().addClass(data.weapon);
@@ -278,7 +290,7 @@
 
                 value = $.trim(value);
 
-                whoIsOnlineTable.append("<tr><td><a href='/user/"+value+"'>" + value +"</a></tr></td>");
+                whoIsOnlineTable.append("<tr><td><a href='/user/" + value + "'>" + value + "</a></tr></td>");
             })
         } else {
             whoIsOnlineTable.html("<tr><td>Oops! No one is online... yet.</tr></td>");
@@ -326,7 +338,7 @@
 
             var player = gameStatusObj["turnToHit"];
 
-            if ( player && player !== username) {
+            if (player && player !== username) {
                 player += "'s";
                 isYourTurnToHit = false;
             } else {
@@ -336,7 +348,7 @@
 
             showWhoseTurnToHit(gameStatusObj['turnToHit']);
 
-        } else if ( gameStatusObj["waitingForOpponent"] ) {
+        } else if (gameStatusObj["waitingForOpponent"]) {
 
             // waiting for opponent
 
@@ -360,7 +372,7 @@
 
         // add cross and circle icons in "Who is online?" table
 
-        $('table td').each(function(index, value) {
+        $('table td').each(function (index, value) {
 
             function findPlayer(player, weapon) {
                 if ($(player).text() === gameStatusObj[weapon + 'Player']) {
@@ -391,11 +403,11 @@
         $('#' + weaponId).change();
     });
 
-    socket.on('waitingForOpponent', function(data) {
+    socket.on('waitingForOpponent', function (data) {
         showWaitOpponentMessage(data.name, data.weapon);
     });
 
-    socket.on('whoseTurn?', function(player) {
+    socket.on('whoseTurn?', function (player) {
         showWhoseTurnToHit(player);
     });
 
@@ -412,5 +424,16 @@
             chatUl.append('<li class="noMessages">Oops! No messages here... yet.</li>');
         }
     });
+    
+    socket.on('draw', function () {
+
+        $('.gameFinished').addClass('draw').text('Draw :|');
+
+        $('div.battleStarted')
+            .html("Battle is over!")
+            .removeClass('hidden');
+
+        $('body').addClass('finished');
+    })
 
 }(jQuery));
