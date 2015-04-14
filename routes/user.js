@@ -49,7 +49,7 @@ exports.userDetails = function (req, res) {
 
                 var efficiency = Math.round((wins / (wins + loses)) * 100);
 
-                return isNaN(efficiency) ? 0 : efficiency
+                return isNaN(efficiency) ? 0 : efficiency;
             }
 
             var userData = {
@@ -73,11 +73,12 @@ exports.userDetails = function (req, res) {
 
 exports.uploadAvatar = function (file, req, res) {
     async.waterfall([
+
         function (callback) {
             User.findOne({ username: req.session.username }, function (err, user) {
                 if (user) {
-                    User.update({_id: user._id}, {$set: { avatar: '/' + file.path }}, function (err) {
-                        req.session.avatar = '/' + file.path;
+                    User.update({_id: user._id}, {$set: { avatar: '/uploads/avatars/' + file.name }}, function (err) {
+                        req.session.avatar = '/uploads/avatars/' + file.name;
                         callback(null, user);
                     });
                 }

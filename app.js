@@ -50,7 +50,7 @@ function addRoutes() {
     app.get('/user/:name', routes.userInfo);
 
     app.post('/user/:name', multer({
-        dest: './uploads/',
+        dest: './uploads',
         limits: {
             fileSize: 1000000,
             files: 1
@@ -63,7 +63,7 @@ function addRoutes() {
         changeDest: function(dest, req, res) {
             var stat = null;
 
-            dest += 'avatars/' + req.params.name;
+            dest += '/avatars/';
 
             try {
                 stat = fs.statSync(dest);
@@ -103,6 +103,8 @@ function addRoutes() {
     }), function (req, res) {
 
     });
+
+    app.get('/uploads/avatars', routes.avatars);
 }
 
 viewEngineSetup();

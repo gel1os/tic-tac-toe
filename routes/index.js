@@ -3,6 +3,7 @@ var login = require('../routes/login');
 var logout = require('../routes/logout');
 var usersList = require('../routes/users');
 var user = require('../routes/user');
+var avatars = require('../routes/avatars');
 
 exports.main = function(req, res, next) {
     var userObj = {
@@ -35,5 +36,9 @@ exports.userInfo = function (req, res, next) {
 
 exports.uploadAvatar = function (file, req, res, next) {
     user.uploadAvatar(file, req, res, next);
+};
+
+exports.avatars = function (req, res) {
+    avatars.avatars(req, res);
 };
 
