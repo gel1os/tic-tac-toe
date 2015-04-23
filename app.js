@@ -15,6 +15,7 @@ var User = require('./models/user').User;
 var async = require('async');
 
 function viewEngineSetup() {
+
     app.set('views', path.join(__dirname, 'views'));
     app.set('view engine', 'ejs');
 
@@ -107,11 +108,8 @@ function addRoutes() {
     app.get('/uploads/avatars', routes.avatars);
 }
 
-viewEngineSetup();
-configureSessionStore();
-addRoutes();
-
-// catch 404 and forward to error handler
+function handleErrors() {
+    // catch 404 and forward to error handler
     app.use(function (req, res, next) {
         var err = new Error('Not Found');
         err.status = 404;
@@ -143,8 +141,11 @@ addRoutes();
             message: ''
         });
     });
+}
 
-// local data-base "uri": "mongodb://localhost/tic-tac-toe”
-// heroku data-base "uri": "mongodb://heroku_app33524989:120rd55plc76sug4b9vjhcjfsr@ds051970.mongolab.com:51970/heroku_app33524989",
+viewEngineSetup();
+configureSessionStore();
+addRoutes();
+handleErrors();
 
-    module.exports = app;
+module.exports = app;

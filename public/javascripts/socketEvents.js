@@ -34,7 +34,7 @@
             .removeClass('hidden');
     }
 
-    function preload(arrayOfImages) {
+    function preloadImages(arrayOfImages) {
         $(arrayOfImages).each(function () {
             $('<img/>')[0].src = this;
         });
@@ -169,6 +169,10 @@
         chatUl.append(messageLi);
     }
 
+    /**
+    * jQuery events
+    */
+
     $doc.ready(function () {
 
         chatUl = $('.chat ul');
@@ -180,7 +184,7 @@
             '/images/AUFKM.png'
         ];
 
-        preload(images);
+        preloadImages(images);
 
         username = $('a.username span').text();
 
@@ -240,6 +244,7 @@
 
         var weaponType = $(this).attr('value');
         chosenWeapon = weaponType;
+
         socket.emit('chooseWeapon', weaponType);
 
         if (!gameInProgress) {
@@ -268,6 +273,11 @@
             appendAlert(alert);
         }
     });
+
+
+    /**
+    * Socket.IO events
+    */
 
     socket.on('fillCell', function (data) {
         var formData = data,

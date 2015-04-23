@@ -1,14 +1,7 @@
-
-
 module.exports = function (client) {
-    var gameInfo = require('../middleware/gameInfo');
+    var gameInfo = require('../gameInfo');
     var User = require('../models/user').User;
     var mongoose = require('../libs/mongoose');
-
-    //drop data-base
-    /*mongoose.connection.collections['users'].drop( function(err) {
-        console.log('collection dropped');
-    });*/
 
     function dropGameStatus(obj) {
         for (var key in obj) {
@@ -31,13 +24,76 @@ module.exports = function (client) {
 
         console.log('user arrived');
 
-        socket.on('dropDataBase', function () {
-            mongoose.connection.collections['users'].drop( function(err) {
-                console.log('collection dropped');
-            });
+        /**
+        * Connection events
+        */
+
+        socket.on('disconnect', function () {
+            var socketUsername = socket.username;
+            if (socketUsername) {
+                gameInfo['usersOnline'].splice(gameInfo['usersOnline'].indexOf(socketUsername), 1);
+                socket.username = null;
+            }
+
+            client.emit('whoIsOnline', gameInfo['usersOnline']);
+
+            if (gameInfo['gameStarted'] || gameInfo['waitingForOpponent'] ) {
+                client.emit('restoreGameStatus', gameInfo);
+            }
         });
 
-        socket.emit('restoreChat', gameInfo);
+        socket.on('logout', function () {
+
+            if (socket.username) {
+                gameInfo['usersOnline'].splice(gameInfo['usersOnline'].indexOf(socket.username), 1);
+                socket.username = null;
+            }
+
+            client.emit('whoIsOnline', gameInfo['usersOnline']);
+
+            if (gameInfo['gameStarted'] || gameInfo['waitingForOpponent']) {
+                socket.emit('restoreGameStatus', gameInfo);
+            }
+        });
+
+        socket.on('saveUsername', function (data) {
+            if (data) {
+
+                socket.username = data;
+                var nameExists = gameInfo['usersOnline'].filter(function (value) {
+                    return value === socket.username
+                });
+
+                if (!nameExists.length) {
+
+                    gameInfo['usersOnline'].push(socket.username);
+
+                    client.emit('whoIsOnline', gameInfo['usersOnline']);
+
+                    if ( gameInfo['gameStarted'] || gameInfo['waitingForOpponent'] ) {
+
+                        client.emit('restoreGameStatus', gameInfo);
+
+                        var player;
+
+                        if (socket.username === gameInfo['crossPlayer']) {
+                            player = 'cross';
+                        } else if (socket.username === gameInfo['circlePlayer']) {
+                            player = 'circle';
+                        }
+
+                        if (player) {
+                            client.to(socket.id).emit("youArePlayer!", player);
+                        }
+
+                    }
+                }
+            }
+        });
+
+        /**
+        * Game status events
+        */
 
         client.emit('whoIsOnline', gameInfo['usersOnline']);
 
@@ -45,6 +101,10 @@ module.exports = function (client) {
             // game in progress or waiting for opponent
             client.emit('restoreGameStatus', gameInfo);
         }
+
+        /**
+        * Game process events
+        */
 
         socket.on('fillCell', function(data) {
 
@@ -139,76 +199,13 @@ module.exports = function (client) {
             }
         });
 
-        socket.on('saveUsername', function (data) {
-            if (data) {
-
-                socket.username = data;
-                var nameExists = gameInfo['usersOnline'].filter(function (value) {
-                    return value === socket.username
-                });
-
-                if (!nameExists.length) {
-
-                    gameInfo['usersOnline'].push(socket.username);
-                    
-                    client.emit('whoIsOnline', gameInfo['usersOnline']);
-
-                    if ( gameInfo['gameStarted'] || gameInfo['waitingForOpponent'] ) {
-
-                        client.emit('restoreGameStatus', gameInfo);
-
-                        var player;
-
-                        if (socket.username === gameInfo['crossPlayer']) {
-                            player = 'cross';
-                        } else if (socket.username === gameInfo['circlePlayer']) {
-                            player = 'circle';
-                        }
-
-                        if (player) {
-                            client.to(socket.id).emit("youArePlayer!", player);
-                        }
-
-                    }
-                }
-            }
-        });
-
-        socket.on('disconnect', function () {
-            var socketUsername = socket.username;
-            if (socketUsername) {
-                gameInfo['usersOnline'].splice(gameInfo['usersOnline'].indexOf(socketUsername), 1);
-                socket.username = null;
-            }
-
-            client.emit('whoIsOnline', gameInfo['usersOnline']);
-            
-            if (gameInfo['gameStarted'] || gameInfo['waitingForOpponent'] ) {
-                client.emit('restoreGameStatus', gameInfo);
-            }
-        });
-
-        socket.on('logout', function () {
-
-            if (socket.username) {
-                gameInfo['usersOnline'].splice(gameInfo['usersOnline'].indexOf(socket.username), 1);
-                socket.username = null;
-            }
-
-            client.emit('whoIsOnline', gameInfo['usersOnline']);
-
-            if (gameInfo['gameStarted'] || gameInfo['waitingForOpponent']) {
-                socket.emit('restoreGameStatus', gameInfo);
-            }
-        });
-
         socket.on('clearBoard', function () {
             gameInfo["filledCells"] = [];
         });
 
         socket.on('battleFinished', function(data) {
             if (!gameInfo['gameFinished']) {
-                
+
                 User.findOne({username: data.winner}, function (err, user) {
                     if (user) {
                         var value = user.winner + 1;
@@ -232,15 +229,33 @@ module.exports = function (client) {
             }
         });
 
+        socket.on('draw', function () {
+            gameInfo['gameFinished'] = true;
+            client.emit('draw');
+        });
+
+        /**
+        * Chat events
+        */
+
         socket.on('sendMessage', function (data) {
             client.emit('sendMessage', data);
             gameInfo.chatMessages.push(data);
         });
 
-        socket.on('draw', function () {
-            gameInfo['gameFinished'] = true;
-            client.emit('draw');
-        })
+        socket.emit('restoreChat', gameInfo);
+
+
+        /**
+        * Drop database event
+        */
+
+        socket.on('dropDataBase', function () {
+            mongoose.connection.collections['users'].drop( function(err) {
+                console.log('collection dropped');
+            });
+        });
+
     });
 };
 

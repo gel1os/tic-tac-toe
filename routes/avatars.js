@@ -7,7 +7,7 @@ exports.avatars = function (req, res) {
     async.waterfall([
         function (callback) {
             var filePath = './uploads/avatars';
-            // General function
+
             var dive = function (dir) {
                 fs.readdir(dir, function (err, list) {
                     if (err) return;
